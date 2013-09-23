@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutMainScrollContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".DemoActivity" >
+
+    <LinearLayout
+        android:id="@+id/layoutMainContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/layoutIPAndPort"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/layoutCurrentIPAddress"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/lblCurrentIPAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_current_ip_address"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/edtCurrentIPAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text"
+                    android:text="@string/txt_current_ip_address" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutSoutilsPort"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/lblSoutilsPort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_default_application_port"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/edtSoutilsPort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text="@string/txt_default_port" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lblMessageToBeSent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_message_to_be_sent"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtMessageToBeSent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:text="@string/txt_default_message" />
+
+        <TextView
+            android:id="@+id/lblConnectToRemoteServer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:text="@string/lbl_connect_to_remote_server"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtHostIPAddress"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:text="@string/txt_sample_ip_address" />
+
+        <LinearLayout
+            android:id="@+id/layoutCommunicationButtons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnStartCommunication"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_start_communication" /> <!-- android:layout_below="@+id/edtHostIPAddress" -->
+
+            <Button
+                android:id="@+id/btnSendMessageToServer"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_send_message" android:enabled="false" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lblStartLocalServer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:onClick="onClick"
+            android:text="@string/lbl_start_local_server"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/layoutCommunicationManagerButtons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnStartCommunicationManager"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_start_communication_manager" />
+
+            <Button
+                android:id="@+id/btnSendMessageToAllClients"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_send_message_all_clients" android:enabled="false" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lblSendReceiveBeacons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:text="@string/lbl_send_and_or_receive_beacons"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/layoutSimpleBeaconButtons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnStartBeaconSender"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_start_beacon_sender" />
+
+            <Button
+                android:id="@+id/btnStartBeaconReceiver"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_start_beacon_receiver" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnStartBeaconSenderReceiver"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_start_sender_and_receiver" />
+
+        <TextView
+            android:id="@+id/lblReceivedMessagesAndBeacons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:text="@string/lbl_received_messages_beacons"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtReceivedMessagesAndBeacons"
+            android:gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="300sp"
+            android:ems="10"
+            android:inputType="textMultiLine" >
+        </EditText>
+    </LinearLayout>
+
+</ScrollView>

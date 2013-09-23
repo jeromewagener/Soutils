@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Soutils-Android</string>
+    <string name="action_settings">Settings</string>
+    
+    <!-- Sample Texts -->
+    <string name="txt_sample_ip_address">192.168.x.x</string>
+    <string name="txt_default_port">4141</string>
+    <string name="txt_current_ip_address">xxx.xxx.xxx.xxx</string>
+    <string name="txt_default_message">Hello Message</string>
+    
+    <!-- Labels -->
+	<string name="lbl_connect_to_remote_server">Connect to Remote Server</string>
+	<string name="lbl_send_and_or_receive_beacons">Send and/or receive Beacons</string>
+	<string name="lbl_start_local_server">Start Local Server</string>
+	<string name="lbl_default_application_port">Application Port</string>
+	<string name="lbl_current_ip_address">Current IP Address</string>
+	<string name="lbl_message_to_be_sent">Message to be sent</string>
+	<string name="lbl_received_messages_beacons">Received messages and beacons</string>
+	
+	<!-- Buttons -->
+	<string name="btn_start_communication">Start Communication</string>
+	<string name="btn_start_communication_manager">Start Comm. Manager</string>
+	<string name="btn_start_beacon_sender">Start Beacon Sender</string>
+	<string name="btn_start_beacon_receiver">Start Beacon Receiver</string>
+	<string name="btn_start_sender_and_receiver">Start Sender &amp; Receiver</string>
+	<string name="btn_send_message">Send Message</string>
+	<string name="btn_send_message_all_clients">Message all Clients</string>
+</resources>
