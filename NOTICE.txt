@@ -1,0 +1,10 @@
+
+   Soutils - Miniature Java socket utilitiy framework for desktops and Android based devices
+   -----------------------------------------------------------------------------------------
+   
+   This software makes use of:
+   
+      * net.iharder.Base64 (Public Domain)
+   
+   
+   Our respect and thanks go to them!
