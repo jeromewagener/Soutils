@@ -3,7 +3,7 @@ Soutils
 
 **NOTE: Currently under development. Do not use yet!**
 
-A Java socket utilitiy framework for Desktops and Android based devices.
+A miniature Java socket utilitiy framework for Desktops and Android based devices.
 
 This project might interest you in if you want to quickly prototype:
 * TCP client-server communications?
