@@ -66,6 +66,7 @@ public class NetworkFacade {
 	/**
 	 * Get the broadcast address of the current network
 	 * @param context the application context to be used to access the wifimanager
+	 * @author not me, unfortunately I forgot where I found this snippet
 	 * @return the broadcast address of the current network
 	 */
 	public static InetAddress getCurrentBroadcastAddress(Context context) {

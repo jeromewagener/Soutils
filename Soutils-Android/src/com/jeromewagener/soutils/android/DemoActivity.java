@@ -22,6 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 package com.jeromewagener.soutils.android;
 
 import java.lang.ref.WeakReference;
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -43,66 +44,48 @@ import com.jeromewagener.soutils.android.networking.CommunicationManager;
 import com.jeromewagener.soutils.android.networking.NetworkFacade;
 
 public class DemoActivity extends Activity {
+	/** The communication manager is able to handle multiple incoming communications. This is the server TCP part. */
 	private static CommunicationManager communicationManager = null;
+	/** The communication reflects a communication line to a communication manager. This is the client TCP part. */
 	private static Communication communication = null;  
+	/** The beacon sender broadcasts beacons (messages) using UDP packages */
 	private static BeaconSender beaconSender = null;
+	/** The beacon receiver will listen for broadcasted beacons (messages) on the specified port */
 	private static BeaconReceiver beaconReceiver = null;
+	/** The beacon sender and receive will send and receive UDP beacons (messages) while listening for other incoming packages */
 	private static BeaconSenderAndReceiver beaconSenderAndReceiver = null;
 	
-	private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
-	
-	private static class MyHandler extends Handler {
+	/** This handler will treat all received messages or beacons. In this Demo-App all received beacons/messages are written to an editbox*/
+	private static class MessageHandler extends Handler {
 		private final WeakReference<DemoActivity> demoActivity;
-
-		public MyHandler(DemoActivity activity) {
+		private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+		
+		public MessageHandler(DemoActivity activity) {
 			demoActivity = new WeakReference<DemoActivity>(activity);
 		}
 
 		@Override
 		public void handleMessage(Message message) {
 			DemoActivity activity = demoActivity.get();
+			
 			if (activity != null) {
 				String senderIpAddress = message.getData().getString("senderIpAddress");
 				String receivedMessage = message.getData().getString("receivedMessage");
 
-				((TextView) activity.findViewById(R.id.edtReceivedMessagesAndBeacons)).setText(
-						sdf.format(new Date()) + ": " + 
+				TextView edtReceivedMessagesAndBeacons = ((TextView) activity.findViewById(R.id.edtReceivedMessagesAndBeacons));
+				edtReceivedMessagesAndBeacons.setText(
+						timeFormatter.format(new Date()) + ": " + 
 						receivedMessage + " (" + senderIpAddress + ")\n" + 
-						((TextView) activity.findViewById(R.id.edtReceivedMessagesAndBeacons)).getText().toString());
+						edtReceivedMessagesAndBeacons.getText().toString());
 			}
 		}
 	}
 	
-	private void disableEverything() {
-		((TextView) findViewById(R.id.edtSoutilsPort)).setEnabled(false);
-		((TextView) findViewById(R.id.edtHostIPAddress)).setEnabled(false);
-		
-		((Button) findViewById(R.id.btnStartCommunication)).setEnabled(false);
-		((Button) findViewById(R.id.btnStartCommunicationManager)).setEnabled(false);
-		
-		((Button) findViewById(R.id.btnSendMessageToServer)).setEnabled(false);
-		((Button) findViewById(R.id.btnSendMessageToAllClients)).setEnabled(false);
-		
-		((Button) findViewById(R.id.btnStartBeaconSender)).setEnabled(false);
-		((Button) findViewById(R.id.btnStartBeaconReceiver)).setEnabled(false);
-		((Button) findViewById(R.id.btnStartBeaconSenderReceiver)).setEnabled(false);
-	}
-	
-	private void enableEverything() {
-		((TextView) findViewById(R.id.edtSoutilsPort)).setEnabled(true);
-		((TextView) findViewById(R.id.edtHostIPAddress)).setEnabled(true);
-		
-		((Button) findViewById(R.id.btnStartCommunication)).setEnabled(true);
-		((Button) findViewById(R.id.btnStartCommunicationManager)).setEnabled(true);
-		
-		((Button) findViewById(R.id.btnStartBeaconSender)).setEnabled(true);
-		((Button) findViewById(R.id.btnStartBeaconReceiver)).setEnabled(true);
-		((Button) findViewById(R.id.btnStartBeaconSenderReceiver)).setEnabled(true);
-	}
-	
-	private final MyHandler messageHandler = new MyHandler(this);
+	/** Instantiate the handler. The reference will be needed by several Soutils classes */
+	private final MessageHandler messageHandler = new MessageHandler(this);
 	
 	@Override
+	/** PLEASE NOTE: The following is bad practice! However, to illustrate the use of Soutils, all code resides within the onCreate. */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_demo_selection);
@@ -110,140 +93,186 @@ public class DemoActivity extends Activity {
 		TextView currentIPAddress = (TextView) findViewById(R.id.edtCurrentIPAddress);
 		currentIPAddress.setText(NetworkFacade.getCurrentIpAddress());
 		
+		/**
+		 * Creating a socket server using the communication manager
+		 * --------------------------------------------------------
+		 **/
 		Button startCommunicationManager = (Button) findViewById(R.id.btnStartCommunicationManager);
 		startCommunicationManager.setOnClickListener(new Button.OnClickListener() {
 		    public void onClick(View v) {
 		    	if (communicationManager == null) {
-		    		disableEverything();
+		    		// Adapt GUI - Not important with respect to Soutils
+		    		ActivityHelpers.disableEverything(DemoActivity.this);
+		    		ActivityHelpers.adaptGUIForCommunicationManager(DemoActivity.this);
 		    		
-		    		((Button) findViewById(R.id.btnStartCommunicationManager)).setEnabled(true);
-		    		((Button) findViewById(R.id.btnStartCommunicationManager)).setText("Stop Comm. Manager");
-		    		((Button) findViewById(R.id.btnSendMessageToAllClients)).setEnabled(true);
+		    		// Retrieve the port from the edit box
+		    		int port = Integer.valueOf(((TextView) findViewById(R.id.edtSoutilsPort)).getText().toString());
 		    		
-		    		communicationManager = NetworkFacade.getCommunicationManagerThread(
-		    				Integer.valueOf(((TextView) findViewById(R.id.edtSoutilsPort)).getText().toString()), messageHandler);
+		    		// Create the server
+		    		communicationManager = NetworkFacade.getCommunicationManagerThread(port, messageHandler);
 		    		communicationManager.start();
 				} else {
-					enableEverything();
+					// Adapt GUI - Not important with respect to Soutils
+					ActivityHelpers.enableEverything(DemoActivity.this);
+					ActivityHelpers.resetGUIForCommunicationManager(DemoActivity.this);
 					
-					((Button) findViewById(R.id.btnStartCommunicationManager)).setText("Start Comm. Manager");
-					((Button) findViewById(R.id.btnSendMessageToAllClients)).setEnabled(false);
-					
+					// Terminate the server
 					communicationManager.done();
 					communicationManager = null;
 				}
 		    }
 		});
 		
+		/**
+		 * Message all clients using the communication manager
+		 * ---------------------------------------------------
+		 **/
 		Button sendMessageToAllConnectedClients = (Button) findViewById(R.id.btnSendMessageToAllClients);
 		sendMessageToAllConnectedClients.setOnClickListener(new Button.OnClickListener() {
 		    public void onClick(View v) {
-		    	communicationManager.sendMessageToAllConnectedPeers(
-		    			((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString());
+		    	// Retrieve message from edit box
+		    	String message = ((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString();
+		    	
+		    	// Send message to all connected clients
+		    	// PLEASE NOTE: You can also send a message to a particular client. 
+		    	// In this case use the sendMessage method which required the IP 
+		    	// address of the corresponding device!
+		    	communicationManager.sendMessageToAllConnectedPeers(message);
 		    }
 		});
 		
+		/**
+		 * Creating a socket client using a communication
+		 * ----------------------------------------------
+		 **/
 		Button startCommunication = (Button) findViewById(R.id.btnStartCommunication);
 		startCommunication.setOnClickListener(new Button.OnClickListener() {
 		    public void onClick(View v) {
-		    	TextView textView = (TextView) findViewById(R.id.edtHostIPAddress);
-		    	TextView applicationPort = (TextView) findViewById(R.id.edtSoutilsPort);
+		    	String hostIPAddress = ((TextView) findViewById(R.id.edtHostIPAddress)).getText().toString();
+		    	int port = Integer.valueOf(((TextView) findViewById(R.id.edtSoutilsPort)).getText().toString());
 		    	
 		    	if (communication == null) {
-		    		disableEverything();
+		    		// Adapt GUI - Not important with respect to Soutils
+		    		ActivityHelpers.disableEverything(DemoActivity.this);
+		    		ActivityHelpers.adaptGUIForCommunication(DemoActivity.this);		    		
 		    		
-		    		((Button) findViewById(R.id.btnStartCommunication)).setEnabled(true);
-		    		((Button) findViewById(R.id.btnStartCommunication)).setText("Stop Communication");
-		    		((Button) findViewById(R.id.btnSendMessageToServer)).setEnabled(true);
-		    		
-					communication = NetworkFacade.getCommunicationThread(
-							textView.getText().toString(), 
-							Integer.valueOf(applicationPort.getText().toString()), 
-							messageHandler);
+		    		// Create the client
+					communication = NetworkFacade.getCommunicationThread(hostIPAddress, port, messageHandler);
 					communication.start();
 				} else {
-					enableEverything();
+					// Adapt GUI - Not important with respect to Soutils
+					ActivityHelpers.enableEverything(DemoActivity.this);
+					ActivityHelpers.resetGUIForCommunication(DemoActivity.this);	
 					
-					((Button) findViewById(R.id.btnStartCommunication)).setText("Start Communication");
-					((Button) findViewById(R.id.btnSendMessageToServer)).setEnabled(false);
-					
+					// Terminate the client
 					communication.done();
 					communication = null;
 				}
 		    }
 		});
 		
+		/**
+		 * Send a message to the communication manager
+		 * -------------------------------------------
+		 **/
 		Button sendMessageToServer = (Button) findViewById(R.id.btnSendMessageToServer);
 		sendMessageToServer.setOnClickListener(new Button.OnClickListener() {
 		    public void onClick(View v) {
-		    	communication.sendMessage(((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString());
+		    	// Retrieve message from edit box
+		    	String message = ((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString();
+		    	
+		    	// Send message to the communication manager (server)
+		    	communication.sendMessage(message);
 		    }
 		});
 		
+		/**
+		 * Start broadcasting UDP beacons / messages
+		 * -----------------------------------------
+		 **/
 		Button startBeaconSender = (Button) findViewById(R.id.btnStartBeaconSender);
 		startBeaconSender.setOnClickListener(new Button.OnClickListener() {
 		    public void onClick(View v) {
 		    	if (beaconSender == null) {
-		    		disableEverything();
+		    		// Adapt GUI - Not important with respect to Soutils
+		    		ActivityHelpers.disableEverything(DemoActivity.this);
+		    		ActivityHelpers.adaptGUIForBeaconSender(DemoActivity.this);
 		    		
-		    		((Button) findViewById(R.id.btnStartBeaconSender)).setEnabled(true);
-		    		((Button) findViewById(R.id.btnStartBeaconSender)).setText("Stop Beacon Sender");
+		    		// Retrieve beacon message from edit box
+		    		String beaconMessage = ((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString();
 		    		
-			    	beaconSender = new BeaconSender(
-			    			((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString(), 
-			    			NetworkFacade.getCurrentBroadcastAddress(v.getContext()));
+		    		// Retrieve broadcast address
+		    		InetAddress broadcastAddress = NetworkFacade.getCurrentBroadcastAddress(v.getContext());
+		    		
+		    		// Create the beacon sender
+			    	beaconSender = new BeaconSender(beaconMessage, broadcastAddress);
 			    	beaconSender.start();
 		    	} else {
-		    		enableEverything();
+		    		// Adapt GUI - Not important with respect to Soutils
+		    		ActivityHelpers.enableEverything(DemoActivity.this);
+		    		ActivityHelpers.resetGUIForBeaconSender(DemoActivity.this);
 		    		
-		    		((Button) findViewById(R.id.btnStartBeaconSender)).setText("Start Beacon Sender");
-		    		
+		    		// Terminate the beacon sender
 		    		beaconSender.done();
 		    		beaconSender = null;
 		    	}
 		    }
 		});
 		
+		/**
+		 * Start listening for UDP beacons / messages
+		 * ------------------------------------------
+		 **/
 		Button startBeaconReceiver = (Button) findViewById(R.id.btnStartBeaconReceiver);
 		startBeaconReceiver.setOnClickListener(new Button.OnClickListener() {
 		    public void onClick(View v) {
 		    	if (beaconReceiver == null) {
-		    		disableEverything();
+		    		// Adapt GUI - Not important with respect to Soutils
+		    		ActivityHelpers.disableEverything(DemoActivity.this);
+		    		ActivityHelpers.adaptGUIForBeaconReceiver(DemoActivity.this);
 		    		
-		    		((Button) findViewById(R.id.btnStartBeaconReceiver)).setEnabled(true);
-		    		((Button) findViewById(R.id.btnStartBeaconReceiver)).setText("Stop Beacon Receiver");
-		    		
+		    		// Start listening
 			    	beaconReceiver = new BeaconReceiver(messageHandler);
 			    	beaconReceiver.start();
 		    	} else {
-		    		enableEverything();
+		    		// Adapt GUI - Not important with respect to Soutils
+		    		ActivityHelpers.enableEverything(DemoActivity.this);
+		    		ActivityHelpers.resetGUIForBeaconReceiver(DemoActivity.this);
 		    		
-		    		((Button) findViewById(R.id.btnStartBeaconSender)).setText("Start Beacon Receiver");
-		    		
+		    		// Terminate listening
 		    		beaconReceiver.done();
 		    		beaconReceiver = null;
 		    	}
 		    }
 		});
 		
+		/**
+		 * Start broadcasting and receiving UDP beacons / messages simultaneously
+		 * -----------------------------------------------------------------------
+		 **/
 		Button startBeaconSenderReceiver = (Button) findViewById(R.id.btnStartBeaconSenderReceiver);
 		startBeaconSenderReceiver.setOnClickListener(new Button.OnClickListener() {
 		    public void onClick(View v) {
 		    	if (beaconSenderAndReceiver == null) {
-		    		disableEverything();
+		    		// Adapt GUI - Not important with respect to Soutils
+		    		ActivityHelpers.disableEverything(DemoActivity.this);
+		    		ActivityHelpers.adaptGUIForBeaconSenderReceiver(DemoActivity.this);
 		    		
-		    		((Button) findViewById(R.id.btnStartBeaconSenderReceiver)).setEnabled(true);
-		    		((Button) findViewById(R.id.btnStartBeaconSenderReceiver)).setText("Stop Sender & Receiver");
+		    		// Retrieve beacon message from edit box
+		    		String message = ((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString();
 		    		
-		    		beaconSenderAndReceiver = new BeaconSenderAndReceiver(
-		    				((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString(),
-		    				NetworkFacade.getCurrentBroadcastAddress(v.getContext()), messageHandler);
+		    		// Retrieve broadcast address
+		    		InetAddress broadcastAddress = NetworkFacade.getCurrentBroadcastAddress(v.getContext());
+		    		
+		    		// Start broadcasting and listening at the same time
+		    		beaconSenderAndReceiver = new BeaconSenderAndReceiver(message, broadcastAddress, messageHandler);
 			    	beaconSenderAndReceiver.start();
 		    	} else {
-		    		enableEverything();
+		    		// Adapt GUI - Not important with respect to Soutils
+		    		ActivityHelpers.enableEverything(DemoActivity.this);
+		    		ActivityHelpers.resetGUIForBeaconSenderReceiver(DemoActivity.this);	    		
 		    		
-		    		((Button) findViewById(R.id.btnStartBeaconSenderReceiver)).setText("Stop Sender & Receiver");
-		    		
+		    		// Terminate simultaneously broadcasting and listening UDP beacons
 		    		beaconSenderAndReceiver.done();
 		    		beaconSenderAndReceiver = null;
 		    	}
