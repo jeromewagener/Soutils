@@ -23,8 +23,13 @@ package com.jeromewagener.soutils.desktop;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -40,6 +45,8 @@ import com.jeromewagener.soutils.desktop.networking.Communication;
 import com.jeromewagener.soutils.desktop.networking.CommunicationManager;
 import com.jeromewagener.soutils.desktop.networking.MessageReceptionObserver;
 import com.jeromewagener.soutils.desktop.networking.NetworkFacade;
+import com.jeromewagener.soutils.filetransfer.FileTransferClient;
+import com.jeromewagener.soutils.filetransfer.FileTransferServer;
 
 public class DemoApp extends JFrame implements MessageReceptionObserver {
 	private static final long serialVersionUID = 8202163031446431261L;
@@ -49,13 +56,17 @@ public class DemoApp extends JFrame implements MessageReceptionObserver {
 	private static BeaconSender beaconSender;
 	private static BeaconReceiver beaconReceiver;
 	private static BeaconSenderAndReceiver beaconSenderAndReceiver;
+	private static FileTransferServer fileTransferServer;
+	private static FileTransferClient fileTransferClient;
 	
 	private static final DemoApp instance = new DemoApp();
 	private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 	
 	// The following GUI components are package protected to allow access from the DemoHelper
 	static JTextPane edtTextMessageBox;
-	static JButton btnStartCommunication, btnStartCommunicationManager, btnSendMessage, btnSendMessageToAllClients, btnStartBeaconSender, btnStartBeaconReceiver, btnStartBeaconSenderAndReceiver;
+	static JButton btnStartCommunication, btnStartCommunicationManager, btnSendMessage, 
+				   btnSendMessageToAllClients, btnStartBeaconSender, btnStartBeaconReceiver, 
+				   btnStartBeaconSenderAndReceiver, btnSendFile, btnReceiveFile;
 	static JTextField edtPort, edtMessageToBeSent, edtHostAddress;
 	
 	public static void main(String[] args) {
@@ -252,6 +263,106 @@ public class DemoApp extends JFrame implements MessageReceptionObserver {
 				}
 			}
 		});
+	    
+	    /**
+		 * Start a file transfer server to upload files to a connected file transfer client
+		 * -----------------------------------------------------------------------
+		 **/
+	    btnSendFile.addMouseListener(new MouseListener() {
+			@Override public void mouseReleased(MouseEvent e) {}
+			@Override public void mousePressed(MouseEvent e) {}
+			@Override public void mouseExited(MouseEvent e) {} 
+			@Override public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (fileTransferServer == null) {
+					DemoHelper.disableEverything();
+					
+					btnSendFile.setText("Stop sending file");
+					btnSendFile.setEnabled(true);
+					
+					// Start server
+					fileTransferServer = new FileTransferServer(generateTextFileForTransfer().getAbsolutePath());
+					fileTransferServer.start();
+					
+		    		// Wait for upload to finish. This will block the UI!
+					// This busy waiting is not very pretty! Please check the documentation for better alternatives
+					while (!fileTransferServer.isDone()) {
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException ie) {
+							ie.printStackTrace();
+						}
+					}					
+					
+					edtTextMessageBox.setText(
+							"File successfully uploaded\n" + edtTextMessageBox.getText());
+					
+					fileTransferServer = null;					
+					btnSendFile.setText("Send auto gen. file");
+					DemoHelper.enableEverything();
+				} else {
+					if (!fileTransferServer.isDone()) {
+						fileTransferServer.setDone(true);
+					}
+					fileTransferServer = null;
+					
+					btnReceiveFile.setText("Send auto gen. file");
+					DemoHelper.enableEverything();
+				}
+			}
+		});
+	    
+	    /**
+		 * Start a file transfer client to receive offered files from a connected file transfer server
+		 * -----------------------------------------------------------------------
+		 **/
+	    btnReceiveFile.addMouseListener(new MouseListener() {
+			@Override public void mouseReleased(MouseEvent e) {}
+			@Override public void mousePressed(MouseEvent e) {}
+			@Override public void mouseExited(MouseEvent e) {} 
+			@Override public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (fileTransferClient == null) {
+					DemoHelper.disableEverything();
+					
+					btnReceiveFile.setText("Stop receiving file");
+					btnReceiveFile.setEnabled(true);
+					
+					// Start client
+					fileTransferClient = new FileTransferClient(
+							System.getProperty("java.io.tmpdir") + "/soutils.txt", edtHostAddress.getText());
+					fileTransferClient.start();
+					
+		    		// Wait for download to finish. This will block the UI!
+					// This busy waiting is not very pretty! Please check the documentation for better alternatives
+					while (!fileTransferClient.isDone()) {
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException ie) {
+							ie.printStackTrace();
+						}
+					}					
+					
+					edtTextMessageBox.setText(
+							"File downloaded to " + System.getProperty("java.io.tmpdir") + "/soutils.txt"
+							+ "\n" + edtTextMessageBox.getText());
+					
+					fileTransferClient = null;					
+					btnReceiveFile.setText("Receive auto gen. file");
+					DemoHelper.enableEverything();
+				} else {
+					if (!fileTransferClient.isDone()) {
+						fileTransferClient.setDone(true);
+					}
+					fileTransferClient = null;
+					
+					btnReceiveFile.setText("Receive auto gen. file");
+					DemoHelper.enableEverything();
+				}
+			}
+		});
 	}
 	
 	@Override
@@ -259,5 +370,25 @@ public class DemoApp extends JFrame implements MessageReceptionObserver {
 		edtTextMessageBox.setText(
 				timeFormatter.format(new Date()) + ": " + message + " (" + ipAddress + ")\n" + 
 				edtTextMessageBox.getText());
+	}
+	
+	public static File generateTextFileForTransfer() {
+		File file = new File(System.getProperty("java.io.tmpdir") + "/soutilsDesktop.txt");
+		Calendar cal = Calendar.getInstance();      
+		String format = String.valueOf(cal.get(Calendar.YEAR)) + "/" + 
+						String.valueOf(cal.get(Calendar.MONTH)) + "/" + 
+						String.valueOf(cal.get(Calendar.DAY_OF_MONTH)) + " " + 
+						String.valueOf(cal.get(Calendar.HOUR_OF_DAY)) + ":" +
+						String.valueOf(cal.get(Calendar.MINUTE));
+		try {
+		     FileOutputStream os = new FileOutputStream(file, false); 
+		     OutputStreamWriter out = new OutputStreamWriter(os);
+		     out.write(InetAddress.getLocalHost().getHostName() + "\n" + format);
+		     out.close();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		
+		return file;
 	}
 }

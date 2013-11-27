@@ -23,7 +23,7 @@ public class DemoHelper {
 	    frame.setTitle("Soutils Demo App");
 
 	    JPanel panelContainer = new JPanel();
-	    panelContainer.setLayout(new GridLayout(5, 1));
+	    panelContainer.setLayout(new GridLayout(6, 1));
 	    panelContainer.setBorder(new EmptyBorder(3,3,3,3));
 	    
 	    Border blackline = BorderFactory.createLineBorder(Color.black);
@@ -103,6 +103,16 @@ public class DemoHelper {
 	    DemoApp.btnStartBeaconSenderAndReceiver = new JButton("Start Sender & Receiver");
 	    panelBeaconing.add(DemoApp.btnStartBeaconSenderAndReceiver);
 	    
+	    JPanel panelFileTransfer = new JPanel();
+	    panelFileTransfer.setBorder(BorderFactory.createTitledBorder(blackline , "Send and/or receive auto generated text files"));
+	    panelFileTransfer.setLayout(new GridLayout(1, 2));
+	    
+	    DemoApp.btnSendFile = new JButton("Send auto gen. file");
+	    panelFileTransfer.add(DemoApp.btnSendFile);
+	    
+	    DemoApp.btnReceiveFile = new JButton("Receive auto gen. file");
+	    panelFileTransfer.add(DemoApp.btnReceiveFile);
+	    
 	    JPanel panelMessageBox = new JPanel();
 	    panelMessageBox.setBorder(BorderFactory.createTitledBorder(blackline , "Received Messages & Beacons"));
 	    panelMessageBox.setLayout(new GridLayout(1, 1));
@@ -115,6 +125,7 @@ public class DemoHelper {
 	    DemoHelper.addWithPadding(panelContainer, panelCommunication);
 	    DemoHelper.addWithPadding(panelContainer, panelCommunicationManager);
 	    DemoHelper.addWithPadding(panelContainer, panelBeaconing);
+	    DemoHelper.addWithPadding(panelContainer, panelFileTransfer);
 	    DemoHelper.addWithPadding(panelContainer, panelMessageBox);
 	    
 	    frame.add(panelContainer);
@@ -131,6 +142,8 @@ public class DemoHelper {
 		DemoApp.btnStartBeaconSender.setEnabled(false);
 		DemoApp.btnStartBeaconReceiver.setEnabled(false);
 		DemoApp.btnStartBeaconSenderAndReceiver.setEnabled(false);
+		DemoApp.btnSendFile.setEnabled(false);
+		DemoApp.btnReceiveFile.setEnabled(false);
 		
 		DemoApp.edtPort.setEnabled(false);
 		DemoApp.edtHostAddress.setEnabled(false);
@@ -139,10 +152,11 @@ public class DemoHelper {
 	public static void enableEverything() {
 		DemoApp.btnStartCommunication.setEnabled(true);
 		DemoApp.btnStartCommunicationManager.setEnabled(true);
-		
 		DemoApp.btnStartBeaconSender.setEnabled(true);
-		DemoApp.btnStartBeaconReceiver.setEnabled(true);
+		DemoApp.btnStartBeaconReceiver.setEnabled(true); 
 		DemoApp.btnStartBeaconSenderAndReceiver.setEnabled(true);
+		DemoApp.btnSendFile.setEnabled(true);
+		DemoApp.btnReceiveFile.setEnabled(true);		
 		
 		DemoApp.edtPort.setEnabled(true);
 		DemoApp.edtHostAddress.setEnabled(true);

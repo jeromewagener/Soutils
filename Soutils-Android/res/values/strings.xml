@@ -18,6 +18,7 @@
 	<string name="lbl_current_ip_address">Current IP Address</string>
 	<string name="lbl_message_to_be_sent">Message to be sent</string>
 	<string name="lbl_received_messages_beacons">Received messages and beacons</string>
+	<string name="lbl_send_or_receive_files">Send or receive (auto. generated txt) files</string>
 	
 	<!-- Buttons -->
 	<string name="btn_start_communication">Start Communication</string>
@@ -27,4 +28,6 @@
 	<string name="btn_start_sender_and_receiver">Start Sender &amp; Receiver</string>
 	<string name="btn_send_message">Send Message</string>
 	<string name="btn_send_message_all_clients">Message all Clients</string>
+	<string name="btn_send_file">Send File</string>
+	<string name="btn_receive_file">Receive File</string>
 </resources>

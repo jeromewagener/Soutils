@@ -68,7 +68,7 @@ public class FileTransferClient extends Thread {
 
 			int counter = 0;
 			byte[] buffer = new byte[FileTransferParameters.BUFFER_SIZE_IN_BYTES];
-			while ((counter = socketInputStream.read(buffer)) > 0) {
+			while ((counter = socketInputStream.read(buffer)) > 0 && !done) {
 				bufferedOutputStream.write(buffer, 0, counter);
 				bufferedOutputStream.flush();
 			}
@@ -83,11 +83,16 @@ public class FileTransferClient extends Thread {
 		done = true;
 	}
 	
+	/** This method allows to manually terminate the download of a file. To be used WITH CAUTION! */
+	public void setDone(boolean done) {
+		this.done = done;
+	}
+	
 	/**
 	 * Check whether the download is finished or not
 	 * @return true if finished, false otherwise
 	 */
-	public boolean isFinished() {
+	public boolean isDone() {
 		return done;
 	}
 }

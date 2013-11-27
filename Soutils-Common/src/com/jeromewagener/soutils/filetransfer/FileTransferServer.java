@@ -69,7 +69,7 @@ public class FileTransferServer extends Thread {
 
 			int counter = 0;
 			byte[] buffer = new byte[FileTransferParameters.BUFFER_SIZE_IN_BYTES];
-			while ((counter = bufferedFileInputStream.read(buffer)) > 0) {
+			while ((counter = bufferedFileInputStream.read(buffer)) > 0 && !done) {
 				socketOutputStream.write(buffer, 0, counter);
 				socketOutputStream.flush();
 			}
@@ -86,11 +86,16 @@ public class FileTransferServer extends Thread {
 		done = true;
 	}
 	
+	/** This method allows to manually terminate the upload of a file. To be used WITH CAUTION! */
+	public void setDone(boolean done) {
+		this.done = done;
+	}
+	
 	/**
 	 * Check whether the upload to another device is finished or not
 	 * @return true if finished, false otherwise
 	 */
-	public boolean isFinished() {
+	public boolean isDone() {
 		return done;
 	}
 }

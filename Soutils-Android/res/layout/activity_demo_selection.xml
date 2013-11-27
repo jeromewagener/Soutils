@@ -182,6 +182,35 @@
             android:text="@string/btn_start_sender_and_receiver" />
 
         <TextView
+            android:id="@+id/lblSendReceiveFiles"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:text="@string/lbl_send_or_receive_files"
+            android:textStyle="bold" />
+        
+        <LinearLayout
+            android:id="@+id/layoutSendReceiveFiles"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnSendFile"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_send_file" />
+
+            <Button
+                android:id="@+id/btnReceiveFile"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_receive_file" />
+        </LinearLayout>
+        
+        <TextView
             android:id="@+id/lblReceivedMessagesAndBeacons"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -197,6 +226,7 @@
             android:ems="10"
             android:inputType="textMultiLine" >
         </EditText>
+
     </LinearLayout>
 
 </ScrollView>

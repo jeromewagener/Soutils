@@ -24,7 +24,9 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f08001b;
+        public static final int action_settings=0x7f08001f;
+        public static final int btnReceiveFile=0x7f08001c;
+        public static final int btnSendFile=0x7f08001b;
         public static final int btnSendMessageToAllClients=0x7f080013;
         public static final int btnSendMessageToServer=0x7f08000f;
         public static final int btnStartBeaconReceiver=0x7f080017;
@@ -35,7 +37,7 @@ public final class R {
         public static final int edtCurrentIPAddress=0x7f080005;
         public static final int edtHostIPAddress=0x7f08000c;
         public static final int edtMessageToBeSent=0x7f08000a;
-        public static final int edtReceivedMessagesAndBeacons=0x7f08001a;
+        public static final int edtReceivedMessagesAndBeacons=0x7f08001e;
         public static final int edtSoutilsPort=0x7f080008;
         public static final int layoutCommunicationButtons=0x7f08000d;
         public static final int layoutCommunicationManagerButtons=0x7f080011;
@@ -43,13 +45,15 @@ public final class R {
         public static final int layoutIPAndPort=0x7f080002;
         public static final int layoutMainContainer=0x7f080001;
         public static final int layoutMainScrollContainer=0x7f080000;
+        public static final int layoutSendReceiveFiles=0x7f08001a;
         public static final int layoutSimpleBeaconButtons=0x7f080015;
         public static final int layoutSoutilsPort=0x7f080006;
         public static final int lblConnectToRemoteServer=0x7f08000b;
         public static final int lblCurrentIPAddress=0x7f080004;
         public static final int lblMessageToBeSent=0x7f080009;
-        public static final int lblReceivedMessagesAndBeacons=0x7f080019;
+        public static final int lblReceivedMessagesAndBeacons=0x7f08001d;
         public static final int lblSendReceiveBeacons=0x7f080014;
+        public static final int lblSendReceiveFiles=0x7f080019;
         public static final int lblSoutilsPort=0x7f080007;
         public static final int lblStartLocalServer=0x7f080010;
     }
@@ -62,15 +66,17 @@ public final class R {
     public static final class string {
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
-        public static final int btn_send_message=0x7f050012;
-        public static final int btn_send_message_all_clients=0x7f050013;
-        public static final int btn_start_beacon_receiver=0x7f050010;
-        public static final int btn_start_beacon_sender=0x7f05000f;
+        public static final int btn_receive_file=0x7f050016;
+        public static final int btn_send_file=0x7f050015;
+        public static final int btn_send_message=0x7f050013;
+        public static final int btn_send_message_all_clients=0x7f050014;
+        public static final int btn_start_beacon_receiver=0x7f050011;
+        public static final int btn_start_beacon_sender=0x7f050010;
         /**  Buttons 
          */
-        public static final int btn_start_communication=0x7f05000d;
-        public static final int btn_start_communication_manager=0x7f05000e;
-        public static final int btn_start_sender_and_receiver=0x7f050011;
+        public static final int btn_start_communication=0x7f05000e;
+        public static final int btn_start_communication_manager=0x7f05000f;
+        public static final int btn_start_sender_and_receiver=0x7f050012;
         /**  Labels 
          */
         public static final int lbl_connect_to_remote_server=0x7f050006;
@@ -79,6 +85,7 @@ public final class R {
         public static final int lbl_message_to_be_sent=0x7f05000b;
         public static final int lbl_received_messages_beacons=0x7f05000c;
         public static final int lbl_send_and_or_receive_beacons=0x7f050007;
+        public static final int lbl_send_or_receive_files=0x7f05000d;
         public static final int lbl_start_local_server=0x7f050008;
         public static final int txt_current_ip_address=0x7f050004;
         public static final int txt_default_message=0x7f050005;

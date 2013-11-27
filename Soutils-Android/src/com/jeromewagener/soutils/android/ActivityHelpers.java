@@ -17,6 +17,9 @@ public class ActivityHelpers {
 		((Button) demoActivity.findViewById(R.id.btnStartBeaconSender)).setEnabled(false);
 		((Button) demoActivity.findViewById(R.id.btnStartBeaconReceiver)).setEnabled(false);
 		((Button) demoActivity.findViewById(R.id.btnStartBeaconSenderReceiver)).setEnabled(false);
+		
+		((Button) demoActivity.findViewById(R.id.btnSendFile)).setEnabled(false);
+		((Button) demoActivity.findViewById(R.id.btnReceiveFile)).setEnabled(false);
 	}
 	
 	public static void enableEverything(DemoActivity demoActivity) {
@@ -29,6 +32,9 @@ public class ActivityHelpers {
 		((Button) demoActivity.findViewById(R.id.btnStartBeaconSender)).setEnabled(true);
 		((Button) demoActivity.findViewById(R.id.btnStartBeaconReceiver)).setEnabled(true);
 		((Button) demoActivity.findViewById(R.id.btnStartBeaconSenderReceiver)).setEnabled(true);
+		
+		((Button) demoActivity.findViewById(R.id.btnSendFile)).setEnabled(true);
+		((Button) demoActivity.findViewById(R.id.btnReceiveFile)).setEnabled(true);
 	}
 	
 	public static void adaptGUIForCommunicationManager(DemoActivity demoActivity) {
@@ -78,5 +84,23 @@ public class ActivityHelpers {
 	
 	public static void resetGUIForBeaconSenderReceiver(DemoActivity demoActivity) {
 		((Button) demoActivity.findViewById(R.id.btnStartBeaconSenderReceiver)).setText("Stop Sender & Receiver");
+	}
+	
+	public static void adaptGUIForSendingFile(DemoActivity demoActivity) {
+		((Button) demoActivity.findViewById(R.id.btnSendFile)).setEnabled(true);
+		((Button) demoActivity.findViewById(R.id.btnSendFile)).setText("Stop Sending");
+	}
+	
+	public static void resetGUIForSendingFile(DemoActivity demoActivity) {
+		((Button) demoActivity.findViewById(R.id.btnSendFile)).setText("Send File");
+	}
+	
+	public static void adaptGUIForReceivingFile(DemoActivity demoActivity) {
+		((Button) demoActivity.findViewById(R.id.btnReceiveFile)).setEnabled(true);
+		((Button) demoActivity.findViewById(R.id.btnReceiveFile)).setText("Stop Receiving");
+	}
+	
+	public static void resetGUIForReceivingFile(DemoActivity demoActivity) {
+		((Button) demoActivity.findViewById(R.id.btnReceiveFile)).setText("Receive File");
 	}
 }
