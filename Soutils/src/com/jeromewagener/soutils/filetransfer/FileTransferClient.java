@@ -22,6 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 package com.jeromewagener.soutils.filetransfer;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.Socket;
@@ -34,9 +35,12 @@ import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
 /** An easy way to download a file from a {@link FileTransferServer} instance via a TCP connection using a single Thread */
 public class FileTransferClient extends SoutilsObservable {
-	private String storageLocationAsAbsolutPath = null;
-	private String serverAddress = null;
+	private final String storageLocationAsAbsolutPath ;
+	private final String serverAddress;
 	private final int fileTransferPort;
+	private final long totalNumberOfBytesToBeTransferred;
+	
+	private int numberOfBytesAlreadyTransferred = 0;
 	private boolean done = false;
 	
 	/**
@@ -50,6 +54,8 @@ public class FileTransferClient extends SoutilsObservable {
 		this.serverAddress = serverIpAddress;
 		this.fileTransferPort = fileTransferPort;
 		this.registerSoutilsObserver(soutilsObserver);
+		
+		totalNumberOfBytesToBeTransferred = new File(storageLocationAsAbsolutPath).length();
 	}
 
 	/** Starts downloading the specified file to the specified location via either the default or a specified port. 
@@ -91,5 +97,14 @@ public class FileTransferClient extends SoutilsObservable {
 	 */
 	public boolean isDone() {
 		return done;
+	}
+	
+	/** Returns the transfer percentage as a double value between 0 and 1 */
+	public double getFileTransferPercentage() {
+		if (done) {
+			return 1;
+		}
+		
+		return ((double) numberOfBytesAlreadyTransferred) / ((double) totalNumberOfBytesToBeTransferred);
 	}
 }

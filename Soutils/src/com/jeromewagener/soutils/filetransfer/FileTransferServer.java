@@ -36,8 +36,11 @@ import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
 /** An easy way to offer downloads to {@link FileTransferClient}'s via a TCP connection using a single Thread */
 public class FileTransferServer extends SoutilsObservable {
-	private String storageLocationAsAbsolutPath = null;
+	private final String storageLocationAsAbsolutPath;
 	private final int fileTransferPort;
+	private final long totalNumberOfBytesToBeTransferred;
+	
+	private int numberOfBytesAlreadyTransferred = 0;
 	private boolean done = false;
 	
 	/**
@@ -49,6 +52,8 @@ public class FileTransferServer extends SoutilsObservable {
 		this.storageLocationAsAbsolutPath = storageLocationAsAbsolutPath;
 		this.fileTransferPort = fileTransferPort;
 		this.registerSoutilsObserver(soutilsObserver);
+		
+		totalNumberOfBytesToBeTransferred = new File(storageLocationAsAbsolutPath).length();
 	}
 	
 	/** Starts offering to upload the specified file via either the default or a specified port. 
@@ -69,6 +74,8 @@ public class FileTransferServer extends SoutilsObservable {
 			while ((counter = bufferedFileInputStream.read(buffer)) > 0 && !done) {
 				socketOutputStream.write(buffer, 0, counter);
 				socketOutputStream.flush();
+				
+				numberOfBytesAlreadyTransferred += counter;
 			}
 
 			socketOutputStream.close();
@@ -95,5 +102,14 @@ public class FileTransferServer extends SoutilsObservable {
 	 */
 	public boolean isDone() {
 		return done;
+	}
+	
+	/** Returns the transfer percentage as a double value between 0 and 1 */
+	public double getFileTransferPercentage() {
+		if (done) {
+			return 1;
+		}
+		
+		return ((double) numberOfBytesAlreadyTransferred) / ((double) totalNumberOfBytesToBeTransferred);
 	}
 }
