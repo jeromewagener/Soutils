@@ -40,10 +40,7 @@ import com.jeromewagener.soutils.messaging.SoutilsObserver;
 import com.jeromewagener.soutils.utilities.Soutilities;
 
 /** The treaded client of a wrapped socket communication */
-public class Communication extends SoutilsObservable {
-	// TODO make configurable
-	private static final String rootMessageTag = "<msg>";
-	
+public class Communication extends SoutilsObservable {	
 	private SocketChannel socketChannel = null;
 	private String clientAddress = null;
 	private boolean done = false;
@@ -119,7 +116,7 @@ public class Communication extends SoutilsObservable {
 					String bufferContent = new String(buffer.array(), "UTF-8").trim();
 
 					if (!bufferContent.equals("")) {
-						List<String> messages = Soutilities.splitMultiMessageString(bufferContent, rootMessageTag);
+						List<String> messages = Soutilities.splitMultiMessageString(bufferContent, Parameters.messageSplitter);
 
 						for (String message : messages) {
 							notifyAllObservers(new SoutilsMessage(MessageType.COMMUNICATION, clientAddress, message));

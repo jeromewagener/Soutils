@@ -184,9 +184,9 @@ public class DemoApp extends JFrame implements SoutilsObserver {
 					btnStartBeaconSender.setEnabled(true);
 					
 					try {
-						// TODO do not simply use the first broadcast address! Loopy loop..
+						// for the demo, we will only broadcast to the first broadcast address
 						HashMap<InetAddress, InetAddress> ipsAndBroadcastAddresses = InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses();
-						InetAddress firstBroadcastAddress = ipsAndBroadcastAddresses.get(ipsAndBroadcastAddresses.keySet().iterator().next()); // TODO			
+						InetAddress firstBroadcastAddress = ipsAndBroadcastAddresses.get(ipsAndBroadcastAddresses.keySet().iterator().next());		
 						
 						beaconSender = new BeaconSender(edtMessageToBeSent.getText(), firstBroadcastAddress, Integer.valueOf(edtPort.getText()), OBSERVER);
 						beaconSender.start();
@@ -251,7 +251,7 @@ public class DemoApp extends JFrame implements SoutilsObserver {
 					btnStartBeaconSenderAndReceiver.setEnabled(true);
 					
 					try {
-						// TODO do not simply use the first broadcast address! Loopy loop..
+						// for the demo, we will only broadcast to the first broadcast address
 						HashMap<InetAddress, InetAddress> ipsAndBroadcastAddresses = InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses();
 						InetAddress firstBroadcastAddress = ipsAndBroadcastAddresses.get(ipsAndBroadcastAddresses.keySet().iterator().next());				
 										

@@ -190,8 +190,8 @@ public class DemoActivity extends Activity implements SoutilsObserver {
 		    		String beaconMessage = ((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString();
 		    		
 		    		try {
-			    		// Retrieve broadcast address
-			    		InetAddress broadcastAddress = InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next(); // TODO
+			    		// Retrieve broadcast address (for the demo we will use the first broadcast address available)
+			    		InetAddress broadcastAddress = InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next();
 			    		
 			    		// Retrieve the port from the edit box
 			    		int port = Integer.valueOf(((TextView) findViewById(R.id.edtSoutilsPort)).getText().toString());
@@ -260,8 +260,8 @@ public class DemoActivity extends Activity implements SoutilsObserver {
 		    		String message = ((TextView) findViewById(R.id.edtMessageToBeSent)).getText().toString();
 		    		
 					try {
-						// Retrieve broadcast address
-			    		InetAddress broadcastAddress = InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next(); //TODO
+						// Retrieve broadcast address (for the demo we will use the first broadcast address available)
+			    		InetAddress broadcastAddress = InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next();
 						// Start broadcasting and listening at the same time
 			    		beaconSenderAndReceiver = new BeaconSenderAndReceiver(message, broadcastAddress, 4242, DemoActivity.this);
 				    	beaconSenderAndReceiver.start();
@@ -419,7 +419,7 @@ public class DemoActivity extends Activity implements SoutilsObserver {
 	public void handleSoutilsMessage(final SoutilsMessage soutilsMessage) {
 		runOnUiThread(new Runnable(){
 		    @Override
-		    public void run(){
+		    public void run() {
 				TextView edtReceivedMessagesAndBeacons = ((TextView) DemoActivity.this.findViewById(R.id.edtReceivedMessagesAndBeacons));
 				edtReceivedMessagesAndBeacons.setText(
 						timeFormatter.format(new Date()) + ": " + 

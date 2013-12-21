@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 package com.jeromewagener.soutils;
 
-public class Parameters {
+public final class Parameters {
 	/** ------------------------------------------------------------------ 
 	 * Communication parameters to be used by all framework communications 
 	 * ------------------------------------------------------------------  */
@@ -34,6 +34,15 @@ public class Parameters {
 	
 	/** The default time between TCP connection accepts for communication servers */
 	public static final int COMMUNICATION_MILLISECONDS_UNTIL_NEXT_CONNECTION_ACCEPT = 500;
+	
+	/** A splitter string which allows to split received multi message strings into SoutilsMessages.
+	 * E.g. Using the default message splitter ({@code<soutils>}), the following string: 
+	 * <pre>{@code<soutils>my message 1</soutils><soutils>my message 2</soutils>}</pre> 
+	 * would be split into two SoutilsMessages having as content
+	 * <pre>{@code<soutils>my message 1</soutils>}</pre> 
+	 * and 
+	 * <pre>{@code<soutils>my message 2</soutils>}</pre> */
+	public static String messageSplitter = "<soutils>";
 	
 	/** ------------------------------------------------------------------ 
 	 * Default parameter constants for beaconing to be used by all framework beacon implementations 

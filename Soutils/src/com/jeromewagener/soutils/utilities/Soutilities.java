@@ -222,20 +222,10 @@ public class Soutilities {
 		if (((firstDot = ipv4Address.indexOf(".", 0)) != -1)
 				&& ((secondDot = ipv4Address.indexOf(".", firstDot + 1)) != -1)
 				&& (ipv4Address.indexOf(".", secondDot + 1) != -1)) {
-			
-			// FIXME previous method no longer supported by java 1.7+
 			return true;
 		}
 
 		return false;
-	}
-
-	/** Returns true if the supplied string corresponds to a valid IPv6 address 
-	 * @param ipv6Address the string to be checked for validity 
-	 * @return true if the string represents a valid IPv6 address, false otherwise */
-	public static boolean isValidIPv6Address(String ipv6Address) {
-		// FIXME previous method no longer supported by java 1.7+
-		return true;
 	}
 
 	/** Returns a base64 encoded string
@@ -273,16 +263,16 @@ public class Soutilities {
 		return new String(decodedBytes);
 	}
 	
-	/** Splits a multi-message xml string into several message strings. If the provided string only contains 
+	/** Splits a multi-message string into several message strings. If the provided string only contains 
 	 * one message, only this message will be returned. If the multiMessageString does not contain at 
-	 * least one device-directory-message, the original string will be returned */
-	public static List<String> splitMultiMessageString(String multiMessageString, String rootXmlTag) {
+	 * least one message splitter string, the original string will be returned */
+	public static List<String> splitMultiMessageString(String multiMessageString, String messageSplitter) {
 		ArrayList<String> messages = new ArrayList<String>();
 		
-		if (multiMessageString.startsWith(rootXmlTag)) {
-			for (String message : multiMessageString.split(rootXmlTag)) {
+		if (multiMessageString.startsWith(messageSplitter)) {
+			for (String message : multiMessageString.split(messageSplitter)) {
 				if (!(message.trim()).isEmpty()) {
-					messages.add(rootXmlTag + message);
+					messages.add(messageSplitter + message);
 				}
 			}
 
