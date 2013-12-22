@@ -40,7 +40,7 @@ public class FileTransferServer extends SoutilsObservable {
 	private final int fileTransferPort;
 	private final long totalNumberOfBytesToBeTransferred;
 	
-	private int numberOfBytesAlreadyTransferred = 0;
+	private long numberOfBytesAlreadyTransferred = 0;
 	private boolean done = false;
 	
 	/**
@@ -104,12 +104,13 @@ public class FileTransferServer extends SoutilsObservable {
 		return done;
 	}
 	
-	/** Returns the transfer percentage as a double value between 0 and 1 */
-	public double getFileTransferPercentage() {
+	/** Returns the transfer percentage as an integer value between 0 and 100 */
+	public long getFileTransferPercentage() {
 		if (done) {
-			return 1;
+			return 100;
 		}
 		
-		return ((double) numberOfBytesAlreadyTransferred) / ((double) totalNumberOfBytesToBeTransferred);
+		Double transferRatio = ((double) numberOfBytesAlreadyTransferred / (double) totalNumberOfBytesToBeTransferred) * 100;
+		return transferRatio.intValue();
 	}
 }

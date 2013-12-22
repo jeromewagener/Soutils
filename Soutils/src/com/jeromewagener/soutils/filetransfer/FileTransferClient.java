@@ -22,7 +22,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 package com.jeromewagener.soutils.filetransfer;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.Socket;
@@ -35,12 +34,14 @@ import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
 /** An easy way to download a file from a {@link FileTransferServer} instance via a TCP connection using a single Thread */
 public class FileTransferClient extends SoutilsObservable {
+	private static final int UNKNOWN_NUMBER_OF_BYTES_TO_BE_TRANSFERRED = -1;
+	
 	private final String storageLocationAsAbsolutPath ;
 	private final String serverAddress;
 	private final int fileTransferPort;
-	private final long totalNumberOfBytesToBeTransferred;
 	
-	private int numberOfBytesAlreadyTransferred = 0;
+	private long totalNumberOfBytesToBeTransferred = UNKNOWN_NUMBER_OF_BYTES_TO_BE_TRANSFERRED;
+	private long numberOfBytesAlreadyTransferred = 0;
 	private boolean done = false;
 	
 	/**
@@ -54,10 +55,23 @@ public class FileTransferClient extends SoutilsObservable {
 		this.serverAddress = serverIpAddress;
 		this.fileTransferPort = fileTransferPort;
 		this.registerSoutilsObserver(soutilsObserver);
-		
-		totalNumberOfBytesToBeTransferred = new File(storageLocationAsAbsolutPath).length();
 	}
 
+	/**
+	 * Create a file transfer client able to download a file offered by a file transfer server
+	 * @param storageLocationAsAbsolutPath the download location of the downloaded file
+	 * @param serverIpAddress the ip address of the file transfer server
+	 * @param fileTransferPort the port used by the server to offer the file transfer
+	 */
+	public FileTransferClient(String storageLocationAsAbsolutPath, String serverIpAddress, int fileTransferPort, SoutilsObserver soutilsObserver, long totalNumberOfBytesToBeTransferred) {
+		this.storageLocationAsAbsolutPath = storageLocationAsAbsolutPath;
+		this.serverAddress = serverIpAddress;
+		this.fileTransferPort = fileTransferPort;
+		this.registerSoutilsObserver(soutilsObserver);
+		
+		this.totalNumberOfBytesToBeTransferred = totalNumberOfBytesToBeTransferred;
+	}
+	
 	/** Starts downloading the specified file to the specified location via either the default or a specified port. 
 	 * The file transfer server must be running in order for this method to work */
 	public void run() {
@@ -73,6 +87,8 @@ public class FileTransferClient extends SoutilsObservable {
 			while ((counter = socketInputStream.read(buffer)) > 0 && !done) {
 				bufferedOutputStream.write(buffer, 0, counter);
 				bufferedOutputStream.flush();
+				
+				numberOfBytesAlreadyTransferred += counter;
 			}
 
 			bufferedOutputStream.close();
@@ -99,12 +115,15 @@ public class FileTransferClient extends SoutilsObservable {
 		return done;
 	}
 	
-	/** Returns the transfer percentage as a double value between 0 and 1 */
-	public double getFileTransferPercentage() {
-		if (done) {
-			return 1;
+	/** Returns the transfer percentage as an integer value between 0 and 100 
+	 * The percentage is only correct if the file transfer client has been initialized with the total number of bytes to be transferred 
+	 * Otherwise, the method will return 0 if the transfer is still ongoing or 100 if the transfer has finished */
+	public int getFileTransferPercentage() {
+		if (done || totalNumberOfBytesToBeTransferred == UNKNOWN_NUMBER_OF_BYTES_TO_BE_TRANSFERRED) {
+			return done ? 100 : 0;
 		}
 		
-		return ((double) numberOfBytesAlreadyTransferred) / ((double) totalNumberOfBytesToBeTransferred);
+		Double transferRatio = ((double) numberOfBytesAlreadyTransferred / (double) totalNumberOfBytesToBeTransferred) * 100;
+		return transferRatio.intValue();
 	}
 }
