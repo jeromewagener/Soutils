@@ -31,9 +31,9 @@ import com.jeromewagener.soutils.messaging.SoutilsMessage;
 import com.jeromewagener.soutils.messaging.SoutilsObservable;
 import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
-/** A thread which sends UDP beacons */
+/** A SoutilsObservable thread which continuously sends UDP beacons. */
 public class BeaconSender extends SoutilsObservable {
-	/** The port used to listen for incoming beacon messages */
+	/** The port used to broadcast beacon messages */
 	private final int port;
 	/** The message to be transferred by the beacon */
 	private String message = null;
@@ -42,36 +42,33 @@ public class BeaconSender extends SoutilsObservable {
 	/** This variable must be set to true in order to stop the thread */
 	private boolean done = false;
 	
-	/**
-	 * Creates a new thread which is able to sent UDP beacons. As for any Java thread, 
+	/** Creates a new SoutilsObservable thread which continuously sends UDP beacons. As for any Java thread, 
 	 * the {@link #run()} must be called to actually start the thread.
 	 * @param port the port used to listen for beacon messages
-	 * @param message the message / beacon to be broadcasted
+	 * @param message the beacon message to be broadcasted
 	 * @param broadcastAddress the IP broadcast address to be used
-	 * @see #run()
-	 */
+	 * @see SoutilsObserver
+	 * @see #run() */
 	public BeaconSender(String message, InetAddress broadcastAddress, int broadcastPort, SoutilsObserver soutilsObserver) {
 		this.port = broadcastPort;
 		this.message = message;
 		this.broadcastAddress = broadcastAddress;
 		this.registerSoutilsObserver(soutilsObserver);		
 	}
-
-
 	
-	/** Replace the beacon message by another updated beacon message. */
+	/** Replace the beacon message by another beacon message. */
 	public void updateBeacon(String message) {
 		this.message = message;
 	}
 	
-	/** 
-	 * Call this method to stop the thread and to prevent it from sending any further beacons
-	 */
+	/** Call this method to stop the thread and to prevent it from sending any additional beacons. Once the thread 
+	 * has been stopped, it cannot be started again. You must instead instantiate a new BeaconSenderAndReceiver instead.
+	 * @see #run() */
 	public void done() {
 		done = true;
 	}
 
-	/** This method sends out a single beacon transferring the message provided via the constructor */
+	/** This method sends out a single beacon with the message specified within the constructor */
 	private void broadcast() { 
 		DatagramSocket socket = null;
 		
@@ -87,11 +84,9 @@ public class BeaconSender extends SoutilsObservable {
 		socket.close();
 	}
 
-	/** 
-	 * Starts the thread which continuously sends out beacons using the default settings 
+	/** Starts the BeaconSender thread which will continuously send out beacons with the message specified within the constructor.
 	 * @see BeaconParameters 
-	 * @see #done()
-	 */
+	 * @see #done() */
 	@Override
 	public void run() {		
 		while (done == false) {

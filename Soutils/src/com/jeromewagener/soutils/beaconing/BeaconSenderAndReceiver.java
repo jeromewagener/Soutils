@@ -33,8 +33,11 @@ import com.jeromewagener.soutils.messaging.SoutilsMessage;
 import com.jeromewagener.soutils.messaging.SoutilsObservable;
 import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
-/** A thread which sends UDP beacons while receiving and buffering other devices's UDP beacons */
+/** A SoutilsObservable thread which listens for UDP beacons which are then 
+ * forwarded to to all registered SoutilsObservers. Opposed to the BeaconReceiver,
+ * this thread allows to simultaneously send UDP beacons using the same port */
 public class BeaconSenderAndReceiver extends SoutilsObservable  {
+	private static final String UTF_8 = "UTF-8";
 	/** The port used to send and receive beacon messages at the same time */
 	private final int port;
 	/** The message to be transferred by the beacon */
@@ -44,30 +47,36 @@ public class BeaconSenderAndReceiver extends SoutilsObservable  {
 	/** The broadcast address to be used for distributing the beacon */
 	private InetAddress broadcastAddress;
 
-	/**
-	 * Creates a new thread which is able to sent and receive UDP beacons. As for any Java thread, 
-	 * the {@link #run()} must be called to actually start the thread.
+	/** Creates a new thread which is able to sent and receive UDP beacons at the same time. As for any Java thread
+	 * the {@link #run()} must be called to start the thread. The received beacons are forwarded to the registered
+	 * SoutilsObserver. More observers can be added using the register method.
 	 * @param port the port used to send and receive beacon messages at the same time
-	 * @param message the message respectively beacon to be broadcasted
+	 * @param message the beacon message to be broadcasted
 	 * @param broadcastAddress the IP broadcast address to be used
-	 * @param soutilsObserver the observer to which will be notified in case of received beacons
+	 * @param soutilsObserver the observer to be notified in case of received beacons
+	 * @see SoutilsObserver
 	 * @see #run()
 	 */
-	public BeaconSenderAndReceiver(String beaconMessage, InetAddress broadcastAddress, int broadcastPort, SoutilsObserver soutilsObserver) {
-		this.port = broadcastPort;
+	public BeaconSenderAndReceiver(String beaconMessage, InetAddress broadcastAddress, int port, SoutilsObserver soutilsObserver) {
+		this.port = port;
 		this.broadcastAddress = broadcastAddress;
 		this.message = beaconMessage;
 		this.registerSoutilsObserver(soutilsObserver);
 	}
 
-	/**
-	 * Call this method to stop the thread and to prevent it from sending any further beacons
-	 */
+	/** Replace the beacon message by another beacon message. */
+	public void updateBeacon(String message) {
+		this.message = message;
+	}
+	
+	/** Call this method to stop the thread and to prevent it from receiving or sending any further beacons.
+	 * Once the thread has been stopped, it cannot be started again. You must instead instantiate a new BeaconSenderAndReceiver instead.
+	 * @see #run() */
 	public void done() {
 		done = true;
 	}
 
-	/** This method sends out a single beacon transferring the message provided via the constructor */
+	/** This method sends out a single beacon with the message specified within the constructor */
 	private void broadcast(DatagramSocket socket) {
 		try {
 			DatagramPacket packet = new DatagramPacket(
@@ -78,12 +87,11 @@ public class BeaconSenderAndReceiver extends SoutilsObservable  {
 		}
 	}
 
-	/** 
-	 * Starts the thread which continuously sends out beacons using the default settings while buffering beacons
-	 * received from other devices
+	/** Starts the BeaconSenderAndReceiver thread which will continuously send out beacons with the message specified
+	 * within the constructor. At the same time, the thread will listen to incoming beacons on the same port. This
+	 * includes beacons sent by the local host.
 	 * @see BeaconParameters 
-	 * @see #done()
-	 */
+	 * @see #done() */
 	@Override
 	public void run() {
 		DatagramSocket datagramSocket = null;
@@ -98,7 +106,7 @@ public class BeaconSenderAndReceiver extends SoutilsObservable  {
 			return;
 		}
 
-		while(!done) {
+		while (!done) {
 			try {
 				broadcast(datagramSocket);				
 
@@ -106,7 +114,7 @@ public class BeaconSenderAndReceiver extends SoutilsObservable  {
 				DatagramPacket packet = new DatagramPacket(datagramBuffer, datagramBuffer.length);
 				datagramSocket.receive(packet);
 				notifyAllObservers(new SoutilsMessage(
-						MessageType.BEACON, packet.getAddress().getHostAddress(), new String(packet.getData(), "UTF-8").trim()));
+						MessageType.BEACON, packet.getAddress().getHostAddress(), new String(packet.getData(), UTF_8).trim()));
 
 				Thread.sleep(Parameters.BEACON_MILLISECONDS_UNTIL_NEXT_BROADCAST);
 			} catch (InterruptedIOException iie) {

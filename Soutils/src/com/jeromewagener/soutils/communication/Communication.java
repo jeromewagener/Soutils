@@ -39,28 +39,35 @@ import com.jeromewagener.soutils.messaging.SoutilsObservable;
 import com.jeromewagener.soutils.messaging.SoutilsObserver;
 import com.jeromewagener.soutils.utilities.Soutilities;
 
-/** The treaded client of a wrapped socket communication */
+/** A SoutilsObservable thread which wraps the client part of a socket communication. Such a client communication is 
+ * able to connect and exchange messages with a server which is represented by a CommunicationManager. If a message
+ * is received from the server, all registered SoutilsObservers are informed about the newly received message.
+ * @see CommunicationManager
+ * @see SoutilsObservable */
 public class Communication extends SoutilsObservable {	
 	private SocketChannel socketChannel = null;
 	private String clientAddress = null;
 	private boolean done = false;
 
-	/** Call this method to stop the thread and terminate the communication */
+	/** Call this method to stop the thread from receiving and and forwarding future messages. Once the thread
+	 * has been stopped, it cannot be started again. You must instead instantiate a new Communication.
+	 * @see #run() */
 	public void done() {
 		done = true;
 	}
 
-	/**
-	 * Creates a new client communication thread with a host device. As for any Java thread this thread needs to be
-	 * started using the {@link #run()} method.
-	 * Returns a new Communication (client) thread which is able to connect with a CommunicationManager (server) thread.
-	 * As for any Java thread, this thread needs to be first started. If the communication is terminated, the thread
-	 * needs to be stopped.
-	 * @param ipAddress the IP address of the host
-	 * @param port the TCP port to which you want to connect to
-	 * @param soutilsObserver the observer to which received messages should be forwarded to
+	/** Sets up a new client communication thread with a host device. The constructor initializes a new Communication (client) 
+	 * thread which is able to connect with a CommunicationManager (server) thread which must be running. 
+	 * Received messages are forwarded to the given SoutilsObserver whereas addition SoutilsObservers can be registered
+	 * using the corresponding register method. As for any Java thread this thread needs to be
+	 * started using the {@link #run()} method. If the communication is terminated, the thread needs to be stopped.
+	 * @param ipAddress the IP address of the host (the device that runs the CommunicationManager)
+	 * @param port the TCP port over which you want to exchange messages
+	 * @param soutilsObserver the observer to which all received messages should be forwarded to
+	 * @see CommunicationManager
 	 * @see #run()
-	 */
+	 * @see SoutilsObservable
+	 * @see #registerSoutilsObserver(SoutilsObserver) */
 	public Communication(String ipAddress, int port, SoutilsObserver soutilsObserver) {		
 		try {
 			SocketAddress address = new InetSocketAddress(ipAddress, port);
@@ -74,12 +81,11 @@ public class Communication extends SoutilsObservable {
 		this.clientAddress = this.socketChannel.socket().getInetAddress().getHostAddress();
 	}
 
-	/**
-	 * Creates a new client communication thread with a host device. As for any Java thread this thread needs to be
-	 * started using the {@link #run()} method.
+	/** Creates a new client communication thread with a host device. As for any Java thread this thread needs to be
+	 * started using the {@link #run()} method. Once the thread has been stopped, it cannot be started again. 
+	 * You must instead instantiate a new Communication.
 	 * @param socketChannel the socketChannel to be used for the communication
-	 * @see #run()
-	 */
+	 * @see #run() */
 	public Communication(SocketChannel socketChannel) {
 		this.socketChannel = socketChannel;
 
@@ -92,11 +98,9 @@ public class Communication extends SoutilsObservable {
 		this.clientAddress = this.socketChannel.socket().getInetAddress().getHostAddress();
 	}
 
-	/** 
-	 * Starts receiving messages which are then buffered using the message queue. If there are registered observers, then
-	 * the message is forwarded to these observers.
-	 * @see #done()
-	 */
+	/** Start listening for incoming messages. As soon as a message has been received, 
+	 * all registered SoutilsObservers are informed about the newly received message.
+	 * @see #done() */
 	@Override
 	public void run() {		
 		ByteBuffer buffer = ByteBuffer.allocate(Parameters.COMMUNICATION_BUFFER_SIZE_IN_BYTES);
@@ -150,11 +154,9 @@ public class Communication extends SoutilsObservable {
 		}
 	}
 
-	/**
-	 * Sends a message to the host
+	/** Sends a message to the host specified within the constructor
 	 * @param messageContent the message to be sent
-	 * @throws CommunicationException
-	 */
+	 * @throws CommunicationException */
 	public synchronized void sendMessage(String messageContent) throws CommunicationException {
 		if (socketChannel.isConnected()) {
 			Charset charset = Charset.forName("UTF-8");
@@ -173,10 +175,8 @@ public class Communication extends SoutilsObservable {
 		}
 	}
 	
-	/**
-	 * Get the IP address of the local device
-	 * @return the IP address of the local device
-	 */
+	/** Get the IP address of the local device
+	 * @return the IP address of the local device */
 	public synchronized String getClientAddress() {
 		return clientAddress;
 	}

@@ -33,25 +33,37 @@ import com.jeromewagener.soutils.messaging.SoutilsMessage;
 import com.jeromewagener.soutils.messaging.SoutilsObservable;
 import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
-/** The treaded server of a wrapped socket communication */
+/** A SoutilsObservable thread which wraps the server part of a socket communication. The CommunicationManager accepts
+ * connections from client Communications. The CommunicationManager is able to simultaneously manage multiple 
+ * communications from multiple devices. As soon as a message is received from one of these communications, all registered
+ * SoutilsObservers are informed about the incoming message. Messages can be either sent using a particular client 
+ * communication identified by the client IP address, or to multiple devices at once.
+ * @see Communication
+ * @see SoutilsObservable */
 public class CommunicationManager extends SoutilsObservable {
 	private ArrayList<Communication> communications = new ArrayList<Communication>();
 	private ServerSocketChannel server = null;
 	private SocketChannel socketChannel = null;
 	private boolean done = false;
 	
-	/** Call this method to terminate the communications with all connected clients */
+	/** Call this method to stop the thread from receiving and and forwarding future messages. Once the thread
+	 * has been stopped, it cannot be started again. You must instead instantiate a new CommunicationManager.
+	 * @see #run() */
 	public void done() {
 		done = true;
 	}
 	
-	/**
-	 * Create a new server thread. As for any Java thread this thread needs to be started using the {@link #run()} method.
-	 * Returns a new CommunicationManager (server) thread to which Communications (clients) can connect to. 
-	 * As for any Java thread, this thread needs to be first started. If the communication is terminated, the thread
-	 * needs to be stopped.
-	 * @param port the port to be used by the server
-	 */
+	/** Sets up a new server communication thread to which clients can connect. The constructor initializes a new 
+	 * CommunicationManager thread (server) which accepts new incoming Communications (client). 
+	 * Received messages are forwarded to the given SoutilsObserver whereas addition SoutilsObservers can be registered
+	 * using the corresponding register method. As for any Java thread this thread needs to be
+	 * started using the {@link #run()} method. If the communication is terminated, the thread needs to be stopped.
+	 * @param port the TCP port to which you want to connect to
+	 * @param soutilsObserver the observer to which all received messages should be forwarded to
+	 * @see Communication
+	 * @see #run()
+	 * @see SoutilsObservable
+	 * @see #registerSoutilsObserver(SoutilsObserver) */
 	public CommunicationManager(int port, SoutilsObserver soutilsObserver) {
 		try {
 			server = ServerSocketChannel.open();
@@ -63,10 +75,8 @@ public class CommunicationManager extends SoutilsObservable {
 		}
 	}
 
-	/**
-	 * Sends a message to all connected clients
-	 * @param messageContent the message to be sent to all connected clients
-	 */
+	/** Sends a message to all connected clients. I.e. to all communications that are currently managed.
+	 * @param messageContent the message to be sent to all connected clients */
 	public synchronized void sendMessageToAllConnectedPeers(String messageContent) {
 		for(Communication communication : communications) {
 			try {
@@ -78,11 +88,9 @@ public class CommunicationManager extends SoutilsObservable {
 		}
 	}
 	
-	/**
-	 * Sends a message to the specified client
+	/** Sends a message to the specified client using a managed communication
 	 * @param receiverAddress the recipient's IP address
-	 * @param messageContent the message to be sent
-	 */
+	 * @param messageContent the message to be sent */
 	public synchronized void sendMessage(String receiverAddress, String messageContent) {
 		for(Communication communication : communications) {			
 			if (communication.getClientAddress().equals(receiverAddress)) {
@@ -96,11 +104,9 @@ public class CommunicationManager extends SoutilsObservable {
 		}
 	}
 	
-	/** 
-	 * Starts receiving messages from all connected clients which are then buffered using an internal message queue. 
-	 * If a message reception observers are registered, then these observers will be notified.
-	 * @see #done()
-	 */
+	/** Starts listening for incoming messages from all connected clients. As soon as a message has been received, 
+	 * all registered SoutilsObservers are informed about the newly received message.
+	 * @see #done() */
 	@Override
 	public void run() {
 		while (!done) {
@@ -138,10 +144,8 @@ public class CommunicationManager extends SoutilsObservable {
 		}
 	}
 
-	/**
-	 * Cancels the communication with a specific client
-	 * @param messageSender the IP address of the client communication that should be cancelled
-	 */
+	/** Shuts down the communication with a specific client
+	 * @param ipAddress the IP address of the client communication that should be terminated */
 	public void shutdownCommunication(String ipAddress) {
 		Communication communicationToBeRemoved = null;
 		

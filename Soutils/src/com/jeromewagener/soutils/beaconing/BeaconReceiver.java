@@ -32,36 +32,34 @@ import com.jeromewagener.soutils.messaging.SoutilsMessage;
 import com.jeromewagener.soutils.messaging.SoutilsObservable;
 import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
-/** A thread which receives and buffers UDP beacons */
+/** A SoutilsObservable thread which listens for UDP beacons which are then 
+ * forwarded to to all registered SoutilsObservers */
 public class BeaconReceiver extends SoutilsObservable {
-	/** The port used to broadcast beacon messages */
+	/** The port used to listen for UDP beacon messages. Set via the constructor. */
 	private final int port;
 	/** This variable must be set to true in order to stop the thread */
 	private boolean done = false;
 	
-	/**
-	 * Creates a beacon receiver thread which notifies the specified beacon reception observer about received beacons
-	 * Please note that additional observers can be added using the register.
-	 * */
+	/** Creates a beacon receiver thread (SoutilsObservable) which notifies the registered 
+	 * beacon reception observer (SoutilsObserver) about received beacons. Please note that 
+	 * additional observers can be added using the register. As for any Java thread
+	 * the {@link #run()} must be called to start the thread.
+	 * @see SoutilsObserver
+	 * @see #run()*/
 	public BeaconReceiver(int port, SoutilsObserver soutilsObserver) {
 		this.port = port;
 		this.registerSoutilsObserver(soutilsObserver);
 	}
 	
-	/**
-	 * Call this method to stop this thread from receiving and buffering beacons
-	 */
+	/** Call this method to stop the thread from receiving and and forwarding future beacons. Once the thread
+	 * has been stopped, it cannot be started again. You must instead instantiate a new BeaconReceiver.
+	 * @see #run() */
 	public void done() {
 		done = true;
 	}
 	
-	/**
-	 * Starts the thread which in turn receives and buffers beacons using the default settings. A beacon that is 
-	 * buffered in an internal queue until polled.
-	 * @see BeaconParameters
-	 * @see #done()
-	 * @see #pollBeacon()
-	 * */
+	/** Start listening for UDP beacons which will then be forwarded to all registered observers.
+	 * @see #done() */
 	@Override
 	public void run() {
 		DatagramSocket datagramSocket = null;
@@ -77,7 +75,7 @@ public class BeaconReceiver extends SoutilsObservable {
 			return;
 		}
 
-		while(!done) {
+		while (!done) {
 			try {
 				byte[] datagramBuffer = new byte[Parameters.BEACON_DATAGRAM_BUFFER_SIZE];
 				DatagramPacket datagramPacket = new DatagramPacket(datagramBuffer, datagramBuffer.length);
