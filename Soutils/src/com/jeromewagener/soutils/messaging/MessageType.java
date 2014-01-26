@@ -21,6 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 package com.jeromewagener.soutils.messaging;
 
+/** An enumeration of all different types of Soutils messages. */
 public enum MessageType {
 	/** A standard message retrieved from a communication (socket) */
 	COMMUNICATION,

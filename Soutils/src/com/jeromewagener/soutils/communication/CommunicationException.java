@@ -21,6 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 package com.jeromewagener.soutils.communication;
 
+/** A representation of an internal Soutils communication exception */
 public class CommunicationException extends RuntimeException {
 	private static final long serialVersionUID = 658719553409592484L;
 

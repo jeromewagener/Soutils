@@ -21,7 +21,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 package com.jeromewagener.soutils.messaging;
 
-/** A simple observer interface to notify observers when a message arrives */
+/** A simple observer interface which must be implemented to notify 
+ * observers if certain events occur. (E.g.: if a message arrives) */
 public interface SoutilsObserver {
 	public void handleSoutilsMessage(SoutilsMessage soutilsMessage);
 }

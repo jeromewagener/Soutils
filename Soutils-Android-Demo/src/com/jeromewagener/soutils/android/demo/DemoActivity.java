@@ -326,7 +326,7 @@ public class DemoActivity extends Activity implements SoutilsObserver {
 		    		
 		    		// Terminate the file transfer server
 		    		if (!fileTransferServer.isDone()) {
-		    			fileTransferServer.setDone(true);
+		    			fileTransferServer.done();
 		    		}
 		    		fileTransferServer = null;
 		    	}
@@ -378,7 +378,7 @@ public class DemoActivity extends Activity implements SoutilsObserver {
 		    		
 		    		// Terminate the file transfer client
 		    		if (!fileTransferClient.isDone()) {
-		    			fileTransferClient.setDone(true);
+		    			fileTransferClient.done();
 		    		}
 		    		fileTransferClient = null;
 		    	}

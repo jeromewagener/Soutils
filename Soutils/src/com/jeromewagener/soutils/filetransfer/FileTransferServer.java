@@ -34,7 +34,11 @@ import com.jeromewagener.soutils.messaging.SoutilsMessage;
 import com.jeromewagener.soutils.messaging.SoutilsObservable;
 import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
-/** An easy way to offer downloads to {@link FileTransferClient}'s via a TCP connection using a single Thread */
+/** A SoutilsObservable thread which wraps a file transfer server that is able to offer a file for 
+ * downloading using a TCP connection. All registered SoutilsObservables will be informed as soon 
+ * as as the transfer has been completed.
+ * @see FileTransferClient
+ * @see SoutilsObservable */
 public class FileTransferServer extends SoutilsObservable {
 	private final String storageLocationAsAbsolutPath;
 	private final int fileTransferPort;
@@ -43,11 +47,12 @@ public class FileTransferServer extends SoutilsObservable {
 	private long numberOfBytesAlreadyTransferred = 0;
 	private boolean done = false;
 	
-	/**
-	 * Create a download server which offers a specific file for an one time download
+	/** Sets up a download server which offers a specified file for an one time download
+	 * As for any Java thread, the {@link #run()} must be called to actually start the thread.
 	 * @param storageLocationAsAbsolutPath the location of the file offered for downloading
 	 * @param fileTransferPort the port used to offer the file download
-	 */
+	 * @param soutilsObserver the observer that is informed in case of errors of in case the download has been completed
+	 * @see #run() */
 	public FileTransferServer(String storageLocationAsAbsolutPath, int fileTransferPort, SoutilsObserver soutilsObserver) {
 		this.storageLocationAsAbsolutPath = storageLocationAsAbsolutPath;
 		this.fileTransferPort = fileTransferPort;
@@ -56,8 +61,8 @@ public class FileTransferServer extends SoutilsObservable {
 		totalNumberOfBytesToBeTransferred = new File(storageLocationAsAbsolutPath).length();
 	}
 	
-	/** Starts offering to upload the specified file via either the default or a specified port. 
-	 * This thread must be running in order for clients to be able to download*/
+	/** Starts offering a download of the specified file via the specified port. 
+	 * This thread must be running in order for clients to be able to download the specified file */
 	public void run() {
 		try {
 			File fileToBeTranferred = new File(storageLocationAsAbsolutPath);
@@ -91,20 +96,19 @@ public class FileTransferServer extends SoutilsObservable {
 		notifyAllObservers(new SoutilsMessage(MessageType.FILE_TRANSFER_COMPLETE, SoutilsMessage.INTERNAL, "File transfer successful!"));
 	}
 	
-	/** This method allows to manually terminate the upload of a file. To be used WITH CAUTION! */
-	public void setDone(boolean done) {
-		this.done = done;
+	/** Call this method to stop the thread from offering the file for download. Once the thread
+	 * has been stopped, it cannot be started again. You must instead instantiate a new FileTransferServer.
+	 * @see #run() */
+	public void done() {
+		this.done = true;
 	}
 	
-	/**
-	 * Check whether the upload to another device is finished or not
-	 * @return true if finished, false otherwise
-	 */
+	/** Check whether the download has finished or not */
 	public boolean isDone() {
 		return done;
 	}
 	
-	/** Returns the transfer percentage as an integer value between 0 and 100 */
+	/** Returns the file transfer percentage as an integer value between 0 and 100 */
 	public long getFileTransferPercentage() {
 		if (done) {
 			return 100;

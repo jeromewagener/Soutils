@@ -21,6 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 package com.jeromewagener.soutils;
 
+/** Various Soutils parameters (E.g. default buffer sizes...) */
 public final class Parameters {
 	/** ------------------------------------------------------------------ 
 	 * Communication parameters to be used by all framework communications 

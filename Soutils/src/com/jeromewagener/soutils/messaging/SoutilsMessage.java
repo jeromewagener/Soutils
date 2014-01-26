@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 package com.jeromewagener.soutils.messaging;
 
-/** A simple message representation */
+/** A simple message representation with a type, sender and content. A message can contain a trowable */
 public class SoutilsMessage {
 	/** The sender address for internal messages */
 	public static final String INTERNAL = "127.0.0.1";
@@ -35,24 +35,21 @@ public class SoutilsMessage {
 	/** A throwable in case an error occurred */
 	private Throwable throwable;
 	
-	/**
-	 * Creates a message instance based on the supplied parameters
+	/** Creates a message instance based on the supplied parameters
 	 * @param type the type of the message
 	 * @param senderAddress the IP address of the message sender
-	 * @param content the actual content of the message
-	 */
+	 * @param content the actual content of the message */
 	public SoutilsMessage(MessageType type, String senderAddress, String content) {
 		this.type = type;
 		this.senderAddress = senderAddress;
 		this.content = content;
 	}
 	
-	/**
-	 * Creates a message instance based on the supplied parameters
+	/** Creates a message instance based on the supplied parameters
 	 * @param type the type of the message
 	 * @param senderAddress the IP address of the message sender
 	 * @param content the actual content of the message
-	 */
+	 * @param throwable a throwable in case an exception needs to be attached to the message */
 	public SoutilsMessage(MessageType type, String senderAddress, Throwable throwable) {
 		this.type = type;
 		this.senderAddress = senderAddress;
@@ -60,18 +57,22 @@ public class SoutilsMessage {
 		this.throwable = throwable;
 	}
 	
+	/** Returns the sender address */
 	public String getSenderAddress() {
 		return senderAddress;
 	}
 	
+	/** Returns the message content */
 	public String getContent() {
 		return content;
 	}
 
+	/** Returns the message type */
 	public MessageType getMessageType() {
 		return type;
 	}
 
+	/** Returns a throwable in case an exception has been attached to the message */
 	public Throwable getThrowable() {
 		return throwable;
 	}

@@ -41,8 +41,9 @@ import java.util.List;
 
 import net.iharder.Base64;
 
-/** Various utility methods */
+/** A repository for various Soutils related functionality */
 public class Soutilities {
+	
 	/** Calculates the MD5 hash of a given string 
 	 * @author Tom V. http://m2tec.be/blog/2010/02/03/java-md5-hex-0093 
 	 * @param stringToBeHashed the string to be hashed 
@@ -159,8 +160,7 @@ public class Soutilities {
 		return new ByteArrayInputStream(string.getBytes("UTF-8"));
 	}
 
-	private final static String[] units = 
-			new String[] { "Bytes", "KiloBytes", "MegaBytes", "GigaBytes", "TeraBytes"};
+	private final static String[] units = new String[] { "Bytes", "KiloBytes", "MegaBytes", "GigaBytes", "TeraBytes"};
 	/** Returns a human readable representation of a filesize given in bytes
 	 * @author Mr Ed - http://stackoverflow.com/a/5599842 
 	 * @param fileSizeInBytes the file size in bytes 

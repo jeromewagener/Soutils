@@ -30,14 +30,12 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 
-
-/** A gateway for quick access to certain network related functionality */
+/** A repository for various IP address related functionality */
 public class InetAddressUtilities {
-	/**
-	 * Get the IP version 4 IP address of the local device
+	
+	/** Get the IP version 4 address of the local device
 	 * @return the IP version 4 IP address of the local device
-	 * @throws SocketException 
-	 */
+	 * @throws SocketException */
 	public static String getCurrentIPv4Address() throws SocketException {
 		for (Enumeration<NetworkInterface> networkInterfaceEnumeration = NetworkInterface.getNetworkInterfaces(); 
 				networkInterfaceEnumeration.hasMoreElements();) {
@@ -55,23 +53,19 @@ public class InetAddressUtilities {
 		return null;		
 	}
 
-	/**
-	 * Get the network mac address of the local device
+	/** Get the network mac address of the local device
 	 * @return the network mac address of the local device
 	 * @throws SocketException 
-	 * @throws UnknownHostException 
-	 */
+	 * @throws UnknownHostException */
 	public static String getCurrentNetworkMacAddress() throws SocketException, UnknownHostException {
 		return getNetworkMacAddress(getCurrentIPv4Address());
 	}
 	
-	/**
-	 * Get the network mac address associated with a particular IP address
+	/** Get the network mac address associated with a particular IP address
 	 * @param ipAddress the IP address for which the mac address is requested
 	 * @return the network mac address
 	 * @throws UnknownHostException 
-	 * @throws SocketException 
-	 */
+	 * @throws SocketException */
 	public static String getNetworkMacAddress(String ipAddress) throws UnknownHostException, SocketException {
 		String networkMacAddressAsString = "";
 		
@@ -93,11 +87,9 @@ public class InetAddressUtilities {
 		return networkMacAddressAsString;
 	}
 	
-	/** 
-	 * Get a mapping of all assigned IP-addresses to their according broadcast addresses 
+	/** Get a mapping of all assigned IP-addresses to their according broadcast addresses 
 	 * @return a mapping of all assigned IP-addresses to their according broadcast addresses 
-	 * @throws SocketException 
-	 * */
+	 * @throws SocketException */
 	public static HashMap<InetAddress, InetAddress> getAllIPsAndAssignedBroadcastAddresses() throws SocketException { 
 		HashMap<InetAddress, InetAddress> ipAndBroadcastAddresses = new HashMap<InetAddress, InetAddress>();
 		Enumeration<?> networkInterfaces;
