@@ -48,12 +48,15 @@ FileTransferClient fileTransferClient = new FileTransferClient(downloadLocation,
 fileTransferClient.start();
 
 // creating universal communication, beaconing or file transfer observers...
-public class MyObserver implements SoutilsObserver {
+public class MyBeaconListener implements SoutilsObserver {
    @Override
    public void handleSoutilsMessage(SoutilsMessage soutilsMessage) {
-       System.out.println("New message received: " + soutilsMessage.getContent());
+       System.out.println("New beacon received: " + soutilsMessage.getContent());
    }
 }
+
+// and registering them with different observables
+BeaconReceiver beaconReceiver = new BeaconReceiver(2121, new MyBeaconListener());
 
 ```
 Good to know
@@ -61,7 +64,9 @@ Good to know
 It might help to know that classes implementing `SoutilsObservable` are wrapped Java threads to which one or more `SoutilsObservers` can register.
 For example: The `BeaconReceiver` extends `SoutilsObservable` which wraps a thread that continously listens for incomming beacons (UDP messages). Every registered `SoutilsObserver` will be notified as soon as a beacon has been detected. 
 
-Implementing the `SoutilsObserver` interface, and by registering to a `SoutilsObservable` is really all you need to do apart from starting the `SoutilsObserver` thread. 
+Implementing the `SoutilsObserver` interface, and by registering to a `SoutilsObservable` is really all you need to do apart from starting the `SoutilsObserver` thread.
+
+More observers can be added to the same observable using the register method defined within the abstract `SoutilsObservable` class.
 
 License 
 --------
