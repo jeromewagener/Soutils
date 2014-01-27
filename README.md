@@ -1,6 +1,6 @@
 Soutils
 =======
-Soutils is a miniature Java socket networking utilitiy framework for Java enabled devices *(Android included)*. This project might interest you in case you want to quickly prototype applications that require non-blocking / threaded:
+Soutils is a miniature Java socket networking utility framework for Java enabled devices *(Android included)*. This project might interest you in case you want to quickly prototype applications that require non-blocking / threaded:
 * TCP client-server communications
 * UDP beaconing / broadcasting
 * File transfers between different devices
@@ -12,6 +12,8 @@ along with the code snippets from below should suffice to get you started.
 
 Furthermore, a sample desktop and Android demo application can be found in the repository. These demo
 applications make use of almost all of the main Soutils features.
+
+By design, Soutils is kept small and simple to allow for easier prototyping and extension.
 
 Code Snippets
 --------
@@ -56,8 +58,10 @@ public class MyObserver implements SoutilsObserver {
 ```
 Good to know
 --------
-It might help to know that `SoutilsObservable` are wrapped Java threads to which one or more `SoutilsObserver` can register.
-For example: The `BeaconReceiver` is a `SoutilsObservable` which wraps a thread that continously listens for incomming beacons (UDP messages). Every registered `SoutilsObserver` will then be notified as soon as a beacon has been detected. Implementing the `SoutilsObserver` interface, and by registering to a `SoutilsObservable` is really all you need to do apart from starting the `SoutilsObserver` thread. 
+It might help to know that classes implementing `SoutilsObservable` are wrapped Java threads to which one or more `SoutilsObservers` can register.
+For example: The `BeaconReceiver` extends `SoutilsObservable` which wraps a thread that continously listens for incomming beacons (UDP messages). Every registered `SoutilsObserver` will be notified as soon as a beacon has been detected. 
+
+Implementing the `SoutilsObserver` interface, and by registering to a `SoutilsObservable` is really all you need to do apart from starting the `SoutilsObserver` thread. 
 
 License 
 --------
