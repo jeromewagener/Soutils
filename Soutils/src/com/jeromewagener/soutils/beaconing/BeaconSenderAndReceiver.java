@@ -48,14 +48,14 @@ public class BeaconSenderAndReceiver extends SoutilsObservable  {
 	private InetAddress broadcastAddress;
 
 	/** Creates a new thread which is able to sent and receive UDP beacons at the same time. As for any Java thread
-	 * the {@link #run()} must be called to start the thread. The received beacons are forwarded to the registered
+	 * the {@link #start()} method must be called to start the thread. The received beacons are forwarded to the registered
 	 * SoutilsObserver. More observers can be added using the register method.
 	 * @param port the port used to send and receive beacon messages at the same time
 	 * @param message the beacon message to be broadcasted
 	 * @param broadcastAddress the IP broadcast address to be used
 	 * @param soutilsObserver the observer to be notified in case of received beacons
 	 * @see SoutilsObserver
-	 * @see #run()
+	 * @see #start()
 	 */
 	public BeaconSenderAndReceiver(String beaconMessage, InetAddress broadcastAddress, int port, SoutilsObserver soutilsObserver) {
 		this.port = port;
@@ -71,7 +71,7 @@ public class BeaconSenderAndReceiver extends SoutilsObservable  {
 	
 	/** Call this method to stop the thread and to prevent it from receiving or sending any further beacons.
 	 * Once the thread has been stopped, it cannot be started again. You must instead instantiate a new BeaconSenderAndReceiver instead.
-	 * @see #run() */
+	 * @see #start() */
 	public void done() {
 		done = true;
 	}

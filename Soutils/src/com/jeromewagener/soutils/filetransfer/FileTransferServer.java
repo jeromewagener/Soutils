@@ -48,11 +48,11 @@ public class FileTransferServer extends SoutilsObservable {
 	private boolean done = false;
 	
 	/** Sets up a download server which offers a specified file for an one time download
-	 * As for any Java thread, the {@link #run()} must be called to actually start the thread.
+	 * As for any Java thread, the {@link #start()} method must be called to actually start the thread.
 	 * @param storageLocationAsAbsolutPath the location of the file offered for downloading
 	 * @param fileTransferPort the port used to offer the file download
 	 * @param soutilsObserver the observer that is informed in case of errors of in case the download has been completed
-	 * @see #run() */
+	 * @see #start() */
 	public FileTransferServer(String storageLocationAsAbsolutPath, int fileTransferPort, SoutilsObserver soutilsObserver) {
 		this.storageLocationAsAbsolutPath = storageLocationAsAbsolutPath;
 		this.fileTransferPort = fileTransferPort;
@@ -98,7 +98,7 @@ public class FileTransferServer extends SoutilsObservable {
 	
 	/** Call this method to stop the thread from offering the file for download. Once the thread
 	 * has been stopped, it cannot be started again. You must instead instantiate a new FileTransferServer.
-	 * @see #run() */
+	 * @see #start() */
 	public void done() {
 		this.done = true;
 	}

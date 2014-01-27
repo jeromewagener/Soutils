@@ -51,7 +51,7 @@ public class Communication extends SoutilsObservable {
 
 	/** Call this method to stop the thread from receiving and and forwarding future messages. Once the thread
 	 * has been stopped, it cannot be started again. You must instead instantiate a new Communication.
-	 * @see #run() */
+	 * @see #start() */
 	public void done() {
 		done = true;
 	}
@@ -60,12 +60,12 @@ public class Communication extends SoutilsObservable {
 	 * thread which is able to connect with a CommunicationManager (server) thread which must be running. 
 	 * Received messages are forwarded to the given SoutilsObserver whereas addition SoutilsObservers can be registered
 	 * using the corresponding register method. As for any Java thread this thread needs to be
-	 * started using the {@link #run()} method. If the communication is terminated, the thread needs to be stopped.
+	 * started using the {@link #start()} method. If the communication is terminated, the thread needs to be stopped.
 	 * @param ipAddress the IP address of the host (the device that runs the CommunicationManager)
 	 * @param port the TCP port over which you want to exchange messages
 	 * @param soutilsObserver the observer to which all received messages should be forwarded to
 	 * @see CommunicationManager
-	 * @see #run()
+	 * @see #start()
 	 * @see SoutilsObservable
 	 * @see #registerSoutilsObserver(SoutilsObserver) */
 	public Communication(String ipAddress, int port, SoutilsObserver soutilsObserver) {		
@@ -82,10 +82,10 @@ public class Communication extends SoutilsObservable {
 	}
 
 	/** Creates a new client communication thread with a host device. As for any Java thread this thread needs to be
-	 * started using the {@link #run()} method. Once the thread has been stopped, it cannot be started again. 
+	 * started using the {@link #start()} method. Once the thread has been stopped, it cannot be started again. 
 	 * You must instead instantiate a new Communication.
 	 * @param socketChannel the socketChannel to be used for the communication
-	 * @see #run() */
+	 * @see #start() */
 	public Communication(SocketChannel socketChannel) {
 		this.socketChannel = socketChannel;
 

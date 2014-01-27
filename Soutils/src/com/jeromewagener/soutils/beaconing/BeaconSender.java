@@ -43,12 +43,12 @@ public class BeaconSender extends SoutilsObservable {
 	private boolean done = false;
 	
 	/** Creates a new SoutilsObservable thread which continuously sends UDP beacons. As for any Java thread, 
-	 * the {@link #run()} must be called to actually start the thread.
+	 * the {@link #start()} method must be called to actually start the thread.
 	 * @param port the port used to listen for beacon messages
 	 * @param message the beacon message to be broadcasted
 	 * @param broadcastAddress the IP broadcast address to be used
 	 * @see SoutilsObserver
-	 * @see #run() */
+	 * @see #start() */
 	public BeaconSender(String message, InetAddress broadcastAddress, int broadcastPort, SoutilsObserver soutilsObserver) {
 		this.port = broadcastPort;
 		this.message = message;
@@ -63,7 +63,7 @@ public class BeaconSender extends SoutilsObservable {
 	
 	/** Call this method to stop the thread and to prevent it from sending any additional beacons. Once the thread 
 	 * has been stopped, it cannot be started again. You must instead instantiate a new BeaconSenderAndReceiver instead.
-	 * @see #run() */
+	 * @see #start() */
 	public void done() {
 		done = true;
 	}

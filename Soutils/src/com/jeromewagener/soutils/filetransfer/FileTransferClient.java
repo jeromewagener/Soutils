@@ -49,12 +49,12 @@ public class FileTransferClient extends SoutilsObservable {
 	private boolean done = false;
 	
 	/** Sets up a file transfer client which is able to download a file offered by a file transfer server
-	 * As for any Java thread, the {@link #run()} must be called to actually start the thread.
+	 * As for any Java thread, the {@link #start()} method must be called to actually start the thread.
 	 * @param storageLocationAsAbsolutPath the storage location for the downloaded the file
 	 * @param serverIpAddress the IP address of the file transfer server
 	 * @param fileTransferPort the port used by the server to offer the file transfer
 	 * @param soutilsObserver the observer that is informed in case of errors of in case the download has been completed
-	 * @see #run() */
+	 * @see #start() */
 	public FileTransferClient(String storageLocationAsAbsolutPath, String serverIpAddress, int fileTransferPort, SoutilsObserver soutilsObserver) {
 		this.storageLocationAsAbsolutPath = storageLocationAsAbsolutPath;
 		this.serverAddress = serverIpAddress;
@@ -63,7 +63,7 @@ public class FileTransferClient extends SoutilsObservable {
 	}
 
 	/** Sets up a file transfer client which is able to download a file offered by a file transfer server
-	 * As for any Java thread, the {@link #run()} must be called to actually start the thread.
+	 * As for any Java thread, the {@link #start()} method must be called to actually start the thread.
 	 * @param storageLocationAsAbsolutPath the storage location for the downloaded the file
 	 * @param serverIpAddress the IP address of the file transfer server
 	 * @param fileTransferPort the port used by the server to offer the file transfer
@@ -71,7 +71,7 @@ public class FileTransferClient extends SoutilsObservable {
 	 * @param totalNumberOfBytesToBeTransferred in order to be able to calculated the transfer percentage, the client must know
 	 * about the total number of bytes that need to be transferred. Please note that you will usually transfer the size
 	 * with a previous communication message that will initiate the transfer.
-	 * @see #run()
+	 * @see #start()
 	 * @see #getFileTransferPercentage() */
 	public FileTransferClient(String storageLocationAsAbsolutPath, String serverIpAddress, int fileTransferPort, SoutilsObserver soutilsObserver, long totalNumberOfBytesToBeTransferred) {
 		this.storageLocationAsAbsolutPath = storageLocationAsAbsolutPath;
@@ -114,7 +114,7 @@ public class FileTransferClient extends SoutilsObservable {
 	
 	/** Call this method to stop the thread from downloading the offered file. Once the thread
 	 * has been stopped, it cannot be started again. You must instead instantiate a new FileTransferClient.
-	 * @see #run() */
+	 * @see #start() */
 	public void done() {
 		this.done = true;
 	}

@@ -43,9 +43,9 @@ public class BeaconReceiver extends SoutilsObservable {
 	/** Creates a beacon receiver thread (SoutilsObservable) which notifies the registered 
 	 * beacon reception observer (SoutilsObserver) about received beacons. Please note that 
 	 * additional observers can be added using the register. As for any Java thread
-	 * the {@link #run()} must be called to start the thread.
+	 * the {@link #start()} method must be called to start the thread.
 	 * @see SoutilsObserver
-	 * @see #run()*/
+	 * @see #start()*/
 	public BeaconReceiver(int port, SoutilsObserver soutilsObserver) {
 		this.port = port;
 		this.registerSoutilsObserver(soutilsObserver);
@@ -53,7 +53,7 @@ public class BeaconReceiver extends SoutilsObservable {
 	
 	/** Call this method to stop the thread from receiving and and forwarding future beacons. Once the thread
 	 * has been stopped, it cannot be started again. You must instead instantiate a new BeaconReceiver.
-	 * @see #run() */
+	 * @see #start() */
 	public void done() {
 		done = true;
 	}

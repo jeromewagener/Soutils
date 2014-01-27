@@ -48,7 +48,7 @@ public class CommunicationManager extends SoutilsObservable {
 	
 	/** Call this method to stop the thread from receiving and and forwarding future messages. Once the thread
 	 * has been stopped, it cannot be started again. You must instead instantiate a new CommunicationManager.
-	 * @see #run() */
+	 * @see #start() */
 	public void done() {
 		done = true;
 	}
@@ -57,11 +57,11 @@ public class CommunicationManager extends SoutilsObservable {
 	 * CommunicationManager thread (server) which accepts new incoming Communications (client). 
 	 * Received messages are forwarded to the given SoutilsObserver whereas addition SoutilsObservers can be registered
 	 * using the corresponding register method. As for any Java thread this thread needs to be
-	 * started using the {@link #run()} method. If the communication is terminated, the thread needs to be stopped.
+	 * started using the {@link #start()} method. If the communication is terminated, the thread needs to be stopped.
 	 * @param port the TCP port to which you want to connect to
 	 * @param soutilsObserver the observer to which all received messages should be forwarded to
 	 * @see Communication
-	 * @see #run()
+	 * @see #start()
 	 * @see SoutilsObservable
 	 * @see #registerSoutilsObserver(SoutilsObserver) */
 	public CommunicationManager(int port, SoutilsObserver soutilsObserver) {
