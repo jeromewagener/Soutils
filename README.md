@@ -1,38 +1,68 @@
 Soutils
 =======
+Soutils is a miniature Java socket networking utilitiy framework for Java enabled devices *(Android included)*. This project might interest you in case you want to quickly prototype applications that require non-blocking / threaded:
+* TCP client-server communications
+* UDP beaconing / broadcasting
+* File transfers between different devices
 
-**NOTE: Currently under development. Do not use yet!**
+How to use Soutils?
+--------
+One of the best resources to learn about Soutils is its Javadoc documentation. This API documentation
+along with the code snippets from below should suffice to get you started.
 
-A miniature Java socket utilitiy framework for Desktops and Android based devices.
+Furthermore, a sample desktop and Android demo application can be found in the repository. These demo
+applications make use of almost all of the main Soutils features.
 
-This project might interest you in if you want to quickly prototype:
-* TCP client-server communications?
-* UDP beaconing?
-* File transfers between different devices?
-
-using little effort in order to:
+Code Snippets
+--------
+This section provides some working Soutils snippets. They should give you an indication on how straight forward it is to use Soutils in order to:
 
 ```Java
-// establish a local server
-CommunicationManager communicationManager = new CommunicationManager(4242)
+// establish a communication server...
+CommunicationManager communicationManager = new CommunicationManager(4242, observer)
 communication.start()
 
-// connect to a remote server
-Communication communication = new Communication(192.168.1.42, 4242)
+// connect from any Java enabled device to this remote communication server...
+Communication communication = new Communication("192.168.1.42", 4242, observer)
 communication.start()
 
-// send or receive a message
+// sending or receiving a messages from the client...
 communication.sendMessage("Hello World");
 
-// or beacons...
-BeaconSender beaconSender = new BeaconSender("Hello Beacon", 192.168.178.255);
+// or from the server...
+communicationManager.sendMessage("192.168.1.21", "Hello to you too!");
+communicationManager.sendMessageToAllConnectedPeers("Hello everybody!");
+
+// broadcasting beacons to all devices within the network...
+BeaconSender beaconSender = new BeaconSender("Hello Beacon", "192.168.178.255", 2121, observer);
 beaconSender.start();
 
+// or offering to download files...
+FileTransferServer fileTransferServer = new FileTransferServer(pathToMyFile, 8484, observer);
+fileTransferServer.start();
+
+// that can be downloaded by file transfer clients...
+FileTransferClient fileTransferClient = new FileTransferClient(downloadLocation, "192.168.1.42", 8484, observer);
+fileTransferClient.start();
+
+// creating universal communication, beaconing or file transfer observers...
+public class MyObserver implements SoutilsObserver {
+   @Override
+   public void handleSoutilsMessage(SoutilsMessage soutilsMessage) {
+       System.out.println("New message received: " + soutilsMessage.getContent());
+   }
+}
+
 ```
+Good to know
+--------
+It might help to know that `SoutilsObservable` are wrapped Java threads to which one or more `SoutilsObserver` can register.
+For example: The `BeaconReceiver` is a `SoutilsObservable` which wraps a thread that continously listens for incomming beacons (UDP messages). Every registered `SoutilsObserver` will then be notified as soon as a beacon has been detected. Implementing the `SoutilsObserver` interface, and by registering to a `SoutilsObservable` is really all you need to do apart from starting the `SoutilsObserver` thread. 
 
-In this case, Soutils provides all this *(and more)* using three simple and easy to use modules:
-* Soutils-Common: The common parameters and code
-* Soutils-Desktop: The desktop implementation
-* Soutils-Android: The android implementation
+License 
+--------
+Soutils is open-source and is distributed under the MIT license. If you decide to use Soutils in your projects, I would greatly appreciate any kind of feedback.
 
-**NOTE: Currently under development. Do not use yet!**
+How can I contribute?
+--------
+If you want to contribute, just fork the repository, add your modifications and give me a pull request. I will do everything possible to include every kind of improvements.
